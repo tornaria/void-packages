@@ -1,7 +1,7 @@
 # Template file for 'sage-deps'
 pkgname=sage-deps
 version=9.4
-revision=2
+revision=3
 build_style=meta
 short_desc="Sage dependencies (meta package)"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
@@ -18,7 +18,7 @@ depends+=" gcc-fortran openssl-devel"
 depends+=" automake gettext gettext-devel"
 
 # other host dependencies
-depends+=" cmake curl git ninja pandoc patch pkg-config python3 tox xz yasm"
+depends+=" cmake curl git ninja pandoc patch pkg-config python3 tox"
 
 # already in void
 depends+="
@@ -28,18 +28,14 @@ depends+="
  libatomic_ops-devel libcurl-devel libffi-devel libmpc-devel
  libpng-devel libxml2-devel mpfr-devel ncurses-devel openblas-devel
  pari-devel pari-elldata-small pari-galdata pari-galpol-small
- pari-seadata pcre-devel perl-File-Slurp perl-JSON
+ pari-seadata pcre-devel perl-File-Slurp perl-JSON perl-Term-ReadKey
  perl-Term-ReadLine-Gnu perl-XML-LibXML perl-XML-LibXSLT
  perl-XML-Writer ppl-devel python3-devel readline-devel sqlite-devel
  zeromq-devel zlib-devel
-"
-
-# new packages / pending PR
-depends+="
  FlintQS SuiteSparse-devel cddlib-devel fflas-ffpack fplll-devel gf2x-devel
  givaro-devel igraph-devel iml-devel lcalc-devel linbox-devel
  m4ri-devel m4rie-devel mpfi-devel ntl-devel perl-SVG rankwidth-devel
- singular sympow zn_poly symmetrica-devel planarity-devel
+ singular sympow zn_poly symmetrica-devel planarity-devel qhull libqhull-devel
 "
 
 # TODO: standard
