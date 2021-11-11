@@ -1,0 +1,3 @@
+# for now, check both stable and devel releases
+site="http://mirrors.mit.edu/sage/src/
+http://mirrors.mit.edu/sage/devel/"

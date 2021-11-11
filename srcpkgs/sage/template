@@ -1,0 +1,74 @@
+# Template file for 'sage'
+pkgname=sage
+version=9.5.beta5
+revision=1
+build_style=configure
+configure_args=--prefix=/usr/lib/sage-${version}
+make_check_target=ptest
+short_desc="Open source mathematics software"
+maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
+license="GPL-3.0-or-later"
+homepage="http://sagemath.org/"
+distfiles="http://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
+checksum=3b78ee848450d6881902bf68f4f3af17e1647e72c51e5fcdcb412c938ecbce57
+
+case ${version} in
+	# url for devel is different
+	*.beta*|*.rc*)
+		distfiles=${distfiles/sage\/src/sage\/devel}
+		;;
+esac
+
+# first we try to build native; we'll worry about cross later
+# besides, some dependencies are nocross
+nocross=yes
+
+# for now, to make install faster
+nostrip=yes
+
+# don't rewrite python shebang as sage uses its own python (for now)
+_no_python_shebang=yes
+
+do_install() {
+	vcopy /usr/lib/sage-${version} usr/lib/
+	vmkdir usr/bin
+	ln -s /usr/lib/sage-${version}/bin/sage ${DESTDIR}/usr/bin/
+}
+
+### copied from sage-deps, to keep in sync
+
+# hard dependencies
+makedepends+=" gcc make m4 perl binutils git tar libgomp-devel"
+
+# recommended dependencies
+makedepends+=" gcc-fortran openssl-devel"
+
+# bootstrap dependencies
+makedepends+=" automake gettext gettext-devel"
+
+# other host dependencies
+makedepends+=" cmake curl git ninja pandoc patch pkg-config python3 tox"
+
+# already in void
+makedepends+="
+ CoinMP-devel R arb-devel boost-devel bzip2-devel ecl eclib-devel
+ ecm-devel flintlib-devel freetype-devel gc-devel gd-devel giac-devel
+ glpk-devel gmp-devel gmpxx-devel gp2c graphviz gsl-devel isl-devel
+ libatomic_ops-devel libcurl-devel libffi-devel libmpc-devel
+ libpng-devel libxml2-devel mpfr-devel ncurses-devel openblas-devel
+ pari-devel pari-elldata-small pari-galdata pari-galpol-small
+ pari-seadata pcre-devel perl-File-Slurp perl-JSON perl-Term-ReadKey
+ perl-Term-ReadLine-Gnu perl-XML-LibXML perl-XML-LibXSLT
+ perl-XML-Writer ppl-devel python3-devel readline-devel sqlite-devel
+ zeromq-devel zlib-devel
+ FlintQS SuiteSparse-devel cddlib-devel fflas-ffpack fplll-devel gf2x-devel
+ givaro-devel igraph-devel iml-devel lcalc-devel linbox-devel
+ m4ri-devel m4rie-devel mpfi-devel ntl-devel perl-SVG rankwidth-devel
+ singular sympow zn_poly symmetrica-devel planarity-devel qhull libqhull-devel
+"
+
+# TODO: standard
+# brial cliquer gfan libbraiding libhomfly lrcalc nauty palp tachyon
+
+# TODO: optional
+# 4ti2 coxeter3 libnauty libsemigroups lrslib perl_mongodb
