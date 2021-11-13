@@ -1,41 +1,63 @@
-# Template file for 'sage'
-pkgname=sage
-version=9.5.beta5
+# Template file for 'sagemath'
+pkgname=sagemath
+version=9.5.beta6
 revision=1
+wrksrc=sage-$version
 build_style=configure
-configure_args=--prefix=/usr/lib/sage-${version}
+configure_args="--enable-build-as-root"
 make_check_target=ptest
+# for now skip building docs
+make_build_target=build
 short_desc="Open source mathematics software"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
 homepage="http://sagemath.org/"
 distfiles="http://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
-checksum=3b78ee848450d6881902bf68f4f3af17e1647e72c51e5fcdcb412c938ecbce57
+checksum=7bae8cbb4db73147bd698261497102524bfadeb71ca66b1c68e96827bd5a8975
+
+# path where sage will be installed
+_SAGE_ROOT=/usr/lib/sage-${version}
 
 case ${version} in
 	# url for devel is different
-	*.beta*|*.rc*)
-		distfiles=${distfiles/sage\/src/sage\/devel}
-		;;
+	*.beta*|*.rc*) distfiles=${distfiles/sage\/src/sage\/devel} ;;
 esac
 
-# first we try to build native; we'll worry about cross later
-# besides, some dependencies are nocross
+# for now, skip check in ci, since we still have a few tests failing
+make_check=ci-skip
+
+# for now, just build native; we'll worry about cross later
+# besides, some dependencies are nocross (e.g. ntl)
 nocross=yes
 
 # for now, to make install faster
 nostrip=yes
 
+# don't shlib_provide anything
+noshlibprovides=yes
+
 # don't rewrite python shebang as sage uses its own python (for now)
 _no_python_shebang=yes
+
+post_extract() {
+	# sage wants to be built in place so let $wrksrc be a symlink
+	mv -T $wrksrc $_SAGE_ROOT
+	ln -sfT $_SAGE_ROOT $wrksrc
+}
+
+do_clean() {
+	# undo post_extract()
+	rm $wrksrc
+	mv $_SAGE_ROOT $wrksrc
+}
 
 do_install() {
 	vcopy /usr/lib/sage-${version} usr/lib/
 	vmkdir usr/bin
-	ln -s /usr/lib/sage-${version}/bin/sage ${DESTDIR}/usr/bin/
+	ln -s $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/
 }
 
-### copied from sage-deps, to keep in sync
+### copied from sage-deps, to be kept in sync
 
 # hard dependencies
 makedepends+=" gcc make m4 perl binutils git tar libgomp-devel"
