@@ -1,7 +1,7 @@
 # Template file for 'sagemath'
 pkgname=sagemath
 version=9.5.beta6
-revision=1
+revision=2
 wrksrc=sage-$version
 build_style=configure
 configure_args="--enable-build-as-root"
@@ -52,7 +52,11 @@ do_clean() {
 }
 
 do_install() {
-	vcopy /usr/lib/sage-${version} usr/lib/
+	vcopy $_SAGE_ROOT usr/lib/
+	# cleanup: upstream sources and build artifacts
+	rm -rf ${DESTDIR}/$_SAGE_ROOT/upstream
+	rm -rf ${DESTDIR}/$_SAGE_ROOT/pkgs/*/build
+	# symlink main binary
 	vmkdir usr/bin
 	ln -s $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/
 }
@@ -87,6 +91,7 @@ makedepends+="
  givaro-devel igraph-devel iml-devel lcalc-devel linbox-devel
  m4ri-devel m4rie-devel mpfi-devel ntl-devel perl-SVG rankwidth-devel
  singular sympow zn_poly symmetrica-devel planarity-devel qhull libqhull-devel
+ gengetopt texinfo
 "
 
 # TODO: standard
