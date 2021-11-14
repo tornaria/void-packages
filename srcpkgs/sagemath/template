@@ -1,19 +1,24 @@
 # Template file for 'sagemath'
 pkgname=sagemath
 version=9.5.beta6
-revision=2
+revision=3
 wrksrc=sage-$version
 build_style=configure
 configure_args="--enable-build-as-root"
 make_check_target=ptest
 # for now skip building docs
 make_build_target=build
+depends="giac git FlintQS zn_poly sympow
+ pari-elldata-small pari-galdata pari-galpol-small pari-seadata-small
+ flintlib-devel gsl-devel ntl-devel eclib-devel pari-devel mpfr-devel
+ m4ri-devel gd-devel libpng-devel fflas-ffpack pkg-config gcc-fortran"
 short_desc="Open source mathematics software"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
 homepage="http://sagemath.org/"
 distfiles="http://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
 checksum=7bae8cbb4db73147bd698261497102524bfadeb71ca66b1c68e96827bd5a8975
+python_version=3
 
 # path where sage will be installed
 _SAGE_ROOT=/usr/lib/sage-${version}
@@ -37,7 +42,8 @@ nostrip=yes
 noshlibprovides=yes
 
 # don't rewrite python shebang as sage uses its own python (for now)
-_no_python_shebang=yes
+# after python_version=3, this seems harmless... strange...
+#_no_python_shebang=yes
 
 post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
@@ -46,9 +52,12 @@ post_extract() {
 }
 
 do_clean() {
-	# undo post_extract()
-	rm $wrksrc
-	mv $_SAGE_ROOT $wrksrc
+	rm -rf $wrksrc $_SAGE_ROOT
+}
+
+post_build() {
+	# install pytest for more tests
+	./sage -i pytest
 }
 
 do_install() {
@@ -58,7 +67,9 @@ do_install() {
 	rm -rf ${DESTDIR}/$_SAGE_ROOT/pkgs/*/build
 	# symlink main binary
 	vmkdir usr/bin
-	ln -s $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/
+	# for now use sage-${version}_${revision} so it doesn't override
+	# other sage installed in the system
+	ln -sfT $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/sage-${version}_${revision}
 }
 
 ### copied from sage-deps, to be kept in sync
