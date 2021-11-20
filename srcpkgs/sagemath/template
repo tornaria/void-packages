@@ -1,7 +1,7 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=9.5.beta6
-revision=3
+version=9.5.beta7
+revision=1
 wrksrc=sage-$version
 build_style=configure
 configure_args="--enable-build-as-root"
@@ -17,7 +17,7 @@ maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
 homepage="http://sagemath.org/"
 distfiles="http://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
-checksum=7bae8cbb4db73147bd698261497102524bfadeb71ca66b1c68e96827bd5a8975
+checksum=b81e1fe22d1b990bf1230260241ead016470da1f2f7b260f562d50f74c2904c7
 python_version=3
 
 # path where sage will be installed
