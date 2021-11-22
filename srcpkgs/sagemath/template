@@ -16,7 +16,7 @@ short_desc="Open source mathematics software"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
 homepage="http://sagemath.org/"
-distfiles="http://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
+distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
 checksum=b81e1fe22d1b990bf1230260241ead016470da1f2f7b260f562d50f74c2904c7
 python_version=3
 
@@ -47,6 +47,7 @@ noshlibprovides=yes
 
 post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
+	rm -rf $_SAGE_ROOT
 	mv -T $wrksrc $_SAGE_ROOT
 	ln -sfT $_SAGE_ROOT $wrksrc
 }
@@ -70,6 +71,11 @@ do_install() {
 	# for now use sage-${version}_${revision} so it doesn't override
 	# other sage installed in the system
 	ln -sfT $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/sage-${version}_${revision}
+}
+
+do_check() {
+	# since make check will build the docs, run test like this instead
+	./sage -tp ${XBPS_MAKEJOBS} --all
 }
 
 ### copied from sage-deps, to be kept in sync
@@ -103,10 +109,9 @@ makedepends+="
  m4ri-devel m4rie-devel mpfi-devel ntl-devel perl-SVG rankwidth-devel
  singular sympow zn_poly symmetrica-devel planarity-devel qhull libqhull-devel
  gengetopt texinfo
+ brial-devel cliquer-devel gfan libbraiding-devel libhomfly-devel
+ lrcalc-devel nauty-devel palp tachyon
 "
 
-# TODO: standard
-# brial cliquer gfan libbraiding libhomfly lrcalc nauty palp tachyon
-
 # TODO: optional
-# 4ti2 coxeter3 libnauty libsemigroups lrslib perl_mongodb
+# 4ti2 coxeter3 libsemigroups lrslib pdf2svg perl_mongodb polymake

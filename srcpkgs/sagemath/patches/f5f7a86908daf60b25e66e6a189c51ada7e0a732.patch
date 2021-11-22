@@ -1,0 +1,25 @@
+From f5f7a86908daf60b25e66e6a189c51ada7e0a732 Mon Sep 17 00:00:00 2001
+From: Antonio Rojas <arojas@archlinux.org>
+Date: Sat, 30 Oct 2021 10:21:52 +0200
+Subject: Fix test failure caused by new warning
+
+---
+ src/sage/lfunctions/pari.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/sage/lfunctions/pari.py b/src/sage/lfunctions/pari.py
+index 0aaf91c..33d5266 100644
+--- a/src/sage/lfunctions/pari.py
++++ b/src/sage/lfunctions/pari.py
+@@ -316,7 +316,7 @@ def lfun_number_field(K):
+         sage: L(3)
+         1.15202784126080
+         sage: L(0)
+-        0.000000000000000
++        ...0.000000000000000
+     """
+     return pari.lfuncreate(K)
+ 
+-- 
+cgit v1.0-1-gd88e
+

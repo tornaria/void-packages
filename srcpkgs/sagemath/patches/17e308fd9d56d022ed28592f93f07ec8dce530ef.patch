@@ -1,0 +1,49 @@
+From 17e308fd9d56d022ed28592f93f07ec8dce530ef Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Mon, 15 Nov 2021 23:37:15 -0500
+Subject: Trac #32880: use GAP instead of Singular to test
+ _get_shared_lib_path().
+
+We still have a doctest for _get_shared_lib_path() that tries to find
+the path to libSingular; however, we no longer actually need it to
+find libSingular because the path to libSingular is contained in
+LIBSINGULAR_PATH.
+
+Since _get_shared_lib_path() is a bit fragile, this commit replaces
+that test case with one for libgap, which is still always installed
+via SPKG and for which we still need _get_shared_lib_path() to be able
+to find the path.
+---
+ src/sage/env.py | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/src/sage/env.py b/src/sage/env.py
+index 40ace13..3bd4826 100644
+--- a/src/sage/env.py
++++ b/src/sage/env.py
+@@ -267,20 +267,12 @@ def _get_shared_lib_path(*libnames: str) -> Optional[str]:
+ 
+     EXAMPLES::
+ 
+-        sage: import sys
+-        sage: from fnmatch import fnmatch
+         sage: from sage.env import _get_shared_lib_path
+-        sage: lib_filename = _get_shared_lib_path("Singular", "singular-Singular")
+-        sage: if sys.platform == 'cygwin':
+-        ....:     pattern = "*/cygSingular-*.dll"
+-        ....: elif sys.platform == 'darwin':
+-        ....:     pattern = "*/libSingular-*.dylib"
+-        ....: else:
+-        ....:     pattern = "*/lib*Singular-*.so"
+-        sage: fnmatch(str(lib_filename), pattern)
++        sage: "gap" in _get_shared_lib_path("gap")
+         True
+         sage: _get_shared_lib_path("an_absurd_lib") is None
+         True
++
+     """
+ 
+     for libname in libnames:
+-- 
+cgit v1.0-1-gd88e
+
