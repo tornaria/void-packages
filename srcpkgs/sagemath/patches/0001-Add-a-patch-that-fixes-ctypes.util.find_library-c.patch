@@ -1,0 +1,64 @@
+From dc1a0e8168a9ffb4fbf07dd03c0846b4933a6dbe Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
+Date: Mon, 22 Nov 2021 23:57:37 -0300
+Subject: [PATCH] Add a patch that fixes ctypes.util.find_library('c')
+
+The issue causes a failure doctesting src/sage/misc/gperftools.py
+---
+ .../python3/patches/musl-find_library.patch   | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 build/pkgs/python3/patches/musl-find_library.patch
+
+diff --git a/build/pkgs/python3/patches/musl-find_library.patch b/build/pkgs/python3/patches/musl-find_library.patch
+new file mode 100644
+index 0000000000..82f436b407
+--- /dev/null
++++ b/build/pkgs/python3/patches/musl-find_library.patch
+@@ -0,0 +1,44 @@
++--- a/Lib/ctypes/util.py
+++++ b/Lib/ctypes/util.py
++@@ -204,6 +204,41 @@
++         def find_library(name, is64 = False):
++             return _get_soname(_findLib_crle(name, is64) or _findLib_gcc(name))
++ 
+++    elif True:
+++
+++        # Patched for Alpine Linux / musl - search manually system paths
+++        def _is_elf(filepath):
+++            try:
+++                with open(filepath, 'rb') as fh:
+++                    return fh.read(4) == b'\x7fELF'
+++            except:
+++                return False
+++
+++        def find_library(name):
+++            from glob import glob
+++            # absolute name?
+++            if os.path.isabs(name):
+++                return name
+++            # special case for libm, libcrypt and libpthread and musl
+++            if name in ['m', 'crypt', 'pthread']:
+++                name = 'c'
+++            elif name in ['libm.so', 'libcrypt.so', 'libpthread.so']:
+++                name = 'libc.so'
+++            # search in standard locations (musl order)
+++            paths = ['/lib', '/usr/local/lib', '/usr/lib']
+++            if 'LD_LIBRARY_PATH' in os.environ:
+++                paths = os.environ['LD_LIBRARY_PATH'].split(':') + paths
+++            for d in paths:
+++                f = os.path.join(d, name)
+++                if _is_elf(f):
+++                    return os.path.basename(f)
+++
+++                prefix = os.path.join(d, 'lib'+name)
+++                for suffix in ['.so', '.so.*']:
+++                    for f in glob('{0}{1}'.format(prefix, suffix)):
+++                        if _is_elf(f):
+++                            return os.path.basename(f)
+++
++     else:
++ 
++         def _findSoname_ldconfig(name):
+-- 
+2.34.0
+

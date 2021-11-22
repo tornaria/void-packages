@@ -1,0 +1,27 @@
+From 89b8754ad30c6a1bd1fdbd6d62011055bf13b24a Mon Sep 17 00:00:00 2001
+From: Tobias Diez <code@tobiasdiez.com>
+Date: Wed, 17 Nov 2021 22:24:32 +0100
+Subject: Fix exit code for pytest in case of no matched files
+
+---
+ src/bin/sage-runtests | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/bin/sage-runtests b/src/bin/sage-runtests
+index 882456d..8b362ca 100755
+--- a/src/bin/sage-runtests
++++ b/src/bin/sage-runtests
+@@ -157,6 +157,10 @@ if __name__ == "__main__":
+         if args.verbose:
+             pytest_options.append("-v")
+         exit_code_pytest = pytest.main(pytest_options + args.filenames)
++        if exit_code_pytest == 5:
++            # Exit code 5 means there were no test files, pass in this case
++            exit_code_pytest = 0
++
+     except ModuleNotFoundError:
+         print("Pytest is not installed, skip checking tests that rely on it.")
+ 
+-- 
+cgit v1.0-1-gd88e
+

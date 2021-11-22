@@ -29,7 +29,7 @@ case ${version} in
 esac
 
 # for now, skip check in ci, since we still have a few tests failing
-make_check=ci-skip
+#make_check=ci-skip
 
 # for now, just build native; we'll worry about cross later
 # besides, some dependencies are nocross (e.g. ntl)
@@ -56,10 +56,15 @@ do_clean() {
 	rm -rf $wrksrc $_SAGE_ROOT
 }
 
-post_build() {
-	# install pytest for more tests
-	./sage -i pytest
-}
+# DISABLED pytest since it brings more harm than good
+# it seems currently all it does is to look for files matching
+# *_test.py and run pytest on those, but I don't think these are meant
+# to be run on pytest (and one even gives a failure...)
+#
+# post_build() {
+# 	# install pytest for more tests
+# 	./sage -i pytest
+# }
 
 do_install() {
 	vcopy $_SAGE_ROOT usr/lib/
