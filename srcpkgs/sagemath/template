@@ -56,6 +56,10 @@ do_clean() {
 	rm -rf $wrksrc $_SAGE_ROOT
 }
 
+pre_configure() {
+	./bootstrap
+}
+
 # DISABLED pytest since it brings more harm than good
 # it seems currently all it does is to look for files matching
 # *_test.py and run pytest on those, but I don't think these are meant
@@ -79,8 +83,12 @@ do_install() {
 }
 
 do_check() {
+	TEST=--all
+	if [ -f ${XBPS_DISTDIR}/sagemath-check ] ; then
+		TEST="$(grep -v "^#" ${XBPS_DISTDIR}/sagemath-check)"
+	fi
 	# since make check will build the docs, run test like this instead
-	./sage -tp ${XBPS_MAKEJOBS} --all
+	./sage -tp ${XBPS_MAKEJOBS} ${TEST}
 }
 
 ### copied from sage-deps, to be kept in sync
