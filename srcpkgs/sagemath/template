@@ -11,7 +11,8 @@ make_build_target=build
 depends="giac git FlintQS zn_poly sympow
  pari-elldata-small pari-galdata pari-galpol-small pari-seadata-small
  flintlib-devel gsl-devel ntl-devel eclib-devel pari-devel mpfr-devel
- m4ri-devel gd-devel libpng-devel fflas-ffpack pkg-config gcc-fortran"
+ m4ri-devel gd-devel libpng-devel fflas-ffpack pkg-config gcc-fortran
+ maxima-ecl"
 short_desc="Open source mathematics software"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
@@ -124,6 +125,7 @@ makedepends+="
  gengetopt texinfo
  brial-devel cliquer-devel gfan libbraiding-devel libhomfly-devel
  lrcalc-devel nauty-devel palp tachyon
+ maxima-ecl
 "
 
 # TODO: optional
