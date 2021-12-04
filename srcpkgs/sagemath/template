@@ -12,7 +12,8 @@ depends="giac git FlintQS zn_poly sympow
  pari-elldata-small pari-galdata pari-galpol-small pari-seadata-small
  flintlib-devel gsl-devel ntl-devel eclib-devel pari-devel mpfr-devel
  m4ri-devel gd-devel libpng-devel fflas-ffpack pkg-config gcc-fortran
- maxima-ecl"
+ linbox-devel gfan nauty-devel palp tachyon maxima-ecl
+ "
 short_desc="Open source mathematics software"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
@@ -43,8 +44,7 @@ nostrip=yes
 noshlibprovides=yes
 
 # don't rewrite python shebang as sage uses its own python (for now)
-# after python_version=3, this seems harmless... strange...
-#_no_python_shebang=yes
+_no_python_shebang=yes
 
 post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
