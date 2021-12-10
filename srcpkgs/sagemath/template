@@ -88,8 +88,10 @@ do_check() {
 	if [ -f ${XBPS_DISTDIR}/sagemath-check ] ; then
 		TEST="$(grep -v "^#" ${XBPS_DISTDIR}/sagemath-check)"
 	fi
+	# the default is "sage,dochtml,optional,build", we skip dochtml
+	OPT="--optional sage,optional,build"
 	# since make check will build the docs, run test like this instead
-	./sage -tp ${XBPS_MAKEJOBS} ${TEST}
+	./sage -tp ${XBPS_MAKEJOBS} ${OPT} ${TEST}
 }
 
 ### copied from sage-deps, to be kept in sync
