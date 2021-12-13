@@ -1,6 +1,6 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=9.5.beta7
+version=9.5.beta8
 revision=1
 wrksrc=sage-$version
 build_style=configure
@@ -19,7 +19,7 @@ maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
 homepage="http://sagemath.org/"
 distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
-checksum=b81e1fe22d1b990bf1230260241ead016470da1f2f7b260f562d50f74c2904c7
+checksum=124f3d23ce6442ecc84ed98e3c035e0d00c8261c3125712e4742c32e731d13de
 python_version=3
 
 # path where sage will be installed
@@ -112,7 +112,7 @@ makedepends+=" cmake curl git ninja pandoc patch pkg-config python3 tox"
 makedepends+="
  CoinMP-devel R arb-devel boost-devel bzip2-devel ecl eclib-devel
  ecm-devel flintlib-devel freetype-devel gc-devel gd-devel giac-devel
- glpk-devel gmp-devel gmpxx-devel gp2c graphviz gsl-devel isl-devel
+ glpk-devel gmp-devel gmpxx-devel gp2c graphviz-devel gsl-devel isl-devel
  libatomic_ops-devel libcurl-devel libffi-devel libmpc-devel
  libpng-devel libxml2-devel mpfr-devel ncurses-devel openblas-devel
  pari-devel pari-elldata-small pari-galdata pari-galpol-small
