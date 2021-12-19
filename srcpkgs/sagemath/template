@@ -22,6 +22,11 @@ distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
 checksum=124f3d23ce6442ecc84ed98e3c035e0d00c8261c3125712e4742c32e731d13de
 python_version=3
 
+build_options="system_python3"
+desc_option_system_python="Build using system python 3"
+build_options_default="system_python3"
+configure_args+=" $(vopt_with system_python3)"
+
 # path where sage will be installed
 _SAGE_ROOT=/usr/lib/sage-${version}
 
@@ -29,6 +34,74 @@ case ${version} in
 	# url for devel is different
 	*.beta*|*.rc*) distfiles=${distfiles/sage\/src/sage\/devel} ;;
 esac
+
+# extra upstream packages (trac-30766 / trac-32968 / trac-33020 / trac-33040)
+_upstream="
+ https://pypi.io/packages/source/i/ipython/ipython-7.29.0.tar.gz
+ https://pypi.io/packages/source/i/ipykernel/ipykernel-6.5.1.tar.gz
+ https://pypi.io/packages/source/i/ipywidgets/ipywidgets-7.6.5.tar.gz
+ https://pypi.io/packages/source/j/jedi/jedi-0.18.1.tar.gz
+ https://pypi.io/packages/source/p/prompt_toolkit/prompt_toolkit-3.0.22.tar.gz
+ https://pypi.io/packages/source/w/widgetsnbextension/widgetsnbextension-3.5.2.tar.gz
+ https://pypi.io/packages/source/t/terminado/terminado-0.12.1.tar.gz
+ https://pypi.io/packages/source/n/notebook/notebook-6.4.6.tar.gz
+ https://pypi.io/packages/source/n/nbclient/nbclient-0.5.9.tar.gz
+ https://pypi.io/packages/source/j/jupyter_client/jupyter_client-7.1.0.tar.gz
+ https://pypi.io/packages/source/j/jupyter_core/jupyter_core-4.9.1.tar.gz
+ https://pypi.io/packages/source/i/importlib_metadata/importlib_metadata-4.8.2.tar.gz
+
+ https://pypi.io/packages/source/s/sphinx/Sphinx-4.3.1.tar.gz
+
+ https://pypi.io/packages/source/i/ipykernel/ipykernel-6.6.0.tar.gz
+
+ https://files.pythonhosted.org/packages/source/c/cycler/cycler-0.11.0.tar.gz
+ https://files.pythonhosted.org/packages/source/k/kiwisolver/kiwisolver-1.3.2.tar.gz
+ https://pypi.io/packages/source/p/pytz/pytz-2021.3.tar.gz
+ https://files.pythonhosted.org/packages/source/c/cppy/cppy-1.1.0.tar.gz
+ https://pypi.io/packages/source/c/certifi/certifi-2021.10.8.tar.gz
+ https://files.pythonhosted.org/packages/source/p/python-dateutil/python-dateutil-2.8.2.tar.gz
+ https://pypi.io/packages/source/p/pillow/Pillow-8.4.0.tar.gz
+ https://files.pythonhosted.org/packages/source/p/pyparsing/pyparsing-3.0.6.tar.gz
+ https://pypi.io/packages/source/m/matplotlib/matplotlib-3.5.1.tar.gz
+ https://pypi.io/packages/source/s/setuptools_scm_git_archive/setuptools_scm_git_archive-1.1.tar.gz
+ https://pypi.io/packages/source/f/fonttools/fonttools-4.28.4.zip
+"
+
+checksum+="
+ 4f69d7423a5a1972f6347ff233e38bbf4df6a150ef20fbb00c635442ac3060aa
+ dd27172bccbbcfef952991e49372e4c6fd1c14eed0df05ebd5b4335cb27a81a2
+ 00974f7cb4d5f8d494c19810fedb9fa9b64bffd3cda7c2be23c133a1ad3c99c5
+ 74137626a64a99c8eb6ae5832d99b3bdd7d29a3850fe2aa80a4126b2a7d949ab
+ 449f333dd120bd01f5d296a8ce1452114ba3a71fae7288d2f0ae2c918764fa72
+ e0731a60ba540cd19bbbefe771a9076dcd2dde90713a8f87f27f53f2d1db7727
+ b20fd93cc57c1678c799799d117874367cc07a3d2d55be95205b1a88fa08393f
+ 7bcdf79bd1cda534735bd9830d2cbedab4ee34d8fe1df6e7b946b3aab0902ba3
+ 99e46ddafacd0b861293bf246fed8540a184adfa3aa7d641f89031ec070701e0
+ a5f995a73cffb314ed262713ae6dfce53c6b8216cea9f332071b8ff44a6e1654
+ dce8a7499da5a53ae3afd5a9f4b02e5df1d57250cf48f3ad79da23b4778cd6fa
+ 75bdec14c397f528724c1bfd9709d660b33a4d2e77387a3358f20b848bb5e5fb
+
+ 32a5b3e9a1b176cc25ed048557d4d3d01af635e6b76c5bc7a43b0a34447fbd45
+
+ 3a227788216b43982d9ac28195949467627b0d16e6b8af9741d95dcaa8c41a89
+
+ 9c87405839a19696e837b3b818fed3f5f69f16f1eec1a1ad77e043dcea9c772f
+ fc4453705b81d03568d5b808ad8f09c77c47534f6ac2e72e733f9ca4714aa75c
+ acad2d8b20a1af07d4e4c9d2e9285c5ed9104354062f275f3fcd88dcef4f1326
+ 4eda6f1952054a270f32dc11df7c5e24b259a09fddf7bfaa5f33df9fb4a29642
+ 78884e7c1d4b00ce3cea67b44566851c4343c120abd683433ce934a68ea58872
+ 0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86
+ b8e2f83c56e141920c39464b852de3719dfbfb6e3c99a2d8da0edf4fb33176ed
+ d9bdec0013ef1eb5a84ab39a3b3868911598afa494f5faa038647101504e2b81
+ b2e9810e09c3a47b73ce9cab5a72243a1258f61e7900969097a817232246ce1c
+ 6026f61089b73fa1b5ee737e95314f41cb512609b393530385ed281d0b46c062
+ 581a682a7102a41421e7e484303572c565c1b8e52b1cc9fecd3c159dbe9a02f4
+"
+
+for u in ${_upstream}; do
+	distfiles+=" $u"
+	skip_extraction+=" ${u##*[/>]}"
+done
 
 # for now, skip check in ci, since we still have a few tests failing
 #make_check=ci-skip
@@ -51,6 +124,10 @@ post_extract() {
 	rm -rf $_SAGE_ROOT
 	mv -T $wrksrc $_SAGE_ROOT
 	ln -srfT $_SAGE_ROOT $wrksrc
+
+	for u in ${_upstream}; do
+		cp "$XBPS_SRCDISTDIR/${pkgname}-${version}/${u##*[/>]}" $wrksrc/upstream
+	done
 }
 
 do_clean() {
@@ -92,6 +169,7 @@ do_check() {
 	OPT="--optional sage,optional,build"
 	# since make check will build the docs, run test like this instead
 	./sage -tp ${XBPS_MAKEJOBS} ${OPT} ${TEST}
+	#./sage -t ${OPT} ${TEST}
 }
 
 ### copied from sage-deps, to be kept in sync
