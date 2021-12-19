@@ -1,0 +1,23 @@
+From 7e16ea979d4bfa1a26ef3b08a29ca626b83b6ff5 Mon Sep 17 00:00:00 2001
+From: Dima Pasechnik <dima@pasechnik.info>
+Date: Sun, 5 Dec 2021 10:59:34 +0000
+Subject: correct the package name: `-`->`_`
+
+---
+ build/pkgs/linbox/spkg-configure.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/pkgs/linbox/spkg-configure.m4 b/build/pkgs/linbox/spkg-configure.m4
+index fbf405c..f54b210 100644
+--- a/build/pkgs/linbox/spkg-configure.m4
++++ b/build/pkgs/linbox/spkg-configure.m4
+@@ -1,5 +1,5 @@
+ SAGE_SPKG_CONFIGURE([linbox], [
+-  SAGE_SPKG_DEPCHECK([fflas-ffpack flint fplll givaro gmp iml m4ri m4rie mpfr ntl], [
++  SAGE_SPKG_DEPCHECK([fflas_ffpack flint fplll givaro gmp iml m4ri m4rie mpfr ntl], [
+     PKG_CHECK_MODULES([LINBOX],
+                       [linbox >= 1.6.3],
+                       [],
+-- 
+cgit v1.0-1-gd88e
+

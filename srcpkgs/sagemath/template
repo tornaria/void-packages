@@ -50,7 +50,7 @@ post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
 	rm -rf $_SAGE_ROOT
 	mv -T $wrksrc $_SAGE_ROOT
-	ln -sfT $_SAGE_ROOT $wrksrc
+	ln -srfT $_SAGE_ROOT $wrksrc
 }
 
 do_clean() {
@@ -112,8 +112,8 @@ makedepends+=" cmake curl git ninja pandoc patch pkg-config python3 tox"
 makedepends+="
  CoinMP-devel R arb-devel boost-devel bzip2-devel ecl eclib-devel
  ecm-devel flintlib-devel freetype-devel gc-devel gd-devel giac-devel
- glpk-devel gmp-devel gmpxx-devel gp2c graphviz-devel gsl-devel isl-devel
- libatomic_ops-devel libcurl-devel libffi-devel libmpc-devel
+ glpk-devel gmp-devel gmpxx-devel gp2c graphviz graphviz-devel gsl-devel
+ isl-devel libatomic_ops-devel libcurl-devel libffi-devel libmpc-devel
  libpng-devel libxml2-devel mpfr-devel ncurses-devel openblas-devel
  pari-devel pari-elldata-small pari-galdata pari-galpol-small
  pari-seadata pcre-devel perl-File-Slurp perl-JSON perl-Term-ReadKey
@@ -127,7 +127,7 @@ makedepends+="
  gengetopt texinfo
  brial-devel cliquer-devel gfan libbraiding-devel libhomfly-devel
  lrcalc-devel nauty-devel palp tachyon
- maxima-ecl
+ maxima-ecl primesieve-devel primecount-devel
 "
 
 # TODO: optional
