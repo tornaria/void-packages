@@ -1,0 +1,35 @@
+From 57e3eba28c9b4ee6bd3407d0715b8bd00aaf04a7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
+Date: Wed, 22 Dec 2021 19:02:08 -0300
+Subject: [PATCH] sagetex: Fix a warning when byte-compiling sagetexparse.py
+
+---
+ .../sagetex/patches/sagetex-fix-warning.patch    | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 build/pkgs/sagetex/patches/sagetex-fix-warning.patch
+
+diff --git a/build/pkgs/sagetex/patches/sagetex-fix-warning.patch b/build/pkgs/sagetex/patches/sagetex-fix-warning.patch
+new file mode 100644
+index 0000000000..d82ab675dd
+--- /dev/null
++++ b/build/pkgs/sagetex/patches/sagetex-fix-warning.patch
+@@ -0,0 +1,16 @@
++Fix a warning when byte-compiling sagetexparse.py
++
++.../venv/share/texmf/tex/latex/sagetex/sagetexparse.py:135: SyntaxWarning: "is not" with a literal. Did you mean "!="?
++  if t.format is not '':
++
++--- a/sagetexparse.py	2020-08-12 05:35:31.000000000 -0300
+++++ b/sagetexparse.py	2021-12-22 18:57:46.619024835 -0300
++@@ -132,7 +132,7 @@
++ 
++   def plotout(self, s, l, t):
++     self.result += '# \\sageplot{} from line %s:\n' % lineno(l, s)
++-    if t.format is not '':
+++    if t.format != '':
++       self.result += '# format: %s' % t.format[0][1:-1] + '\n'
++     self.result += t.code[1:-1] + '\n\n'
++ 
+-- 
+2.34.1
+

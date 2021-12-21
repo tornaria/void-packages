@@ -119,6 +119,9 @@ noshlibprovides=yes
 # don't rewrite python shebang as sage uses its own python (for now)
 _no_python_shebang=yes
 
+# compile python code in sage venv
+pycompile_dirs="$_SAGE_ROOT/venv"
+
 post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
 	rm -rf $_SAGE_ROOT
@@ -150,9 +153,22 @@ pre_configure() {
 
 do_install() {
 	vcopy $_SAGE_ROOT usr/lib/
-	# cleanup: upstream sources and build artifacts
+	# cleanup: upstream packages and build artifacts
 	rm -rf ${DESTDIR}/$_SAGE_ROOT/upstream
-	rm -rf ${DESTDIR}/$_SAGE_ROOT/pkgs/*/build
+	#rm -rf ${DESTDIR}/$_SAGE_ROOT/pkgs/*/build
+	# more cleanup
+	for d in .ci .circleci .git .github autom4te.cache config docker m4
+	do
+		rm -rf ${DESTDIR}/$_SAGE_ROOT/$d
+	done
+	# keep required empty dirs
+	for d in local/share/doc/sage/html/en/{docname,tutorial,reference} \
+	         local/share/doc/sage/doctrees/en/{docname,tutorial}
+	do
+		mkdir -p ${DESTDIR}/$_SAGE_ROOT/$d
+		touch ${DESTDIR}/$_SAGE_ROOT/$d/.empty
+	done
+
 	# symlink main binary
 	vmkdir usr/bin
 	# for now use sage-${version}_${revision} so it doesn't override

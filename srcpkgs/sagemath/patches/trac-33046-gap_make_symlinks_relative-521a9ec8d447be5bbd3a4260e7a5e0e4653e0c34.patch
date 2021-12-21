@@ -1,14 +1,14 @@
 From 521a9ec8d447be5bbd3a4260e7a5e0e4653e0c34 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
 Date: Sun, 28 Nov 2021 18:57:34 -0300
-Subject: [PATCH] build/pkgs/gap/spkg-install: make symlinks relative
+Subject: build/pkgs/gap/spkg-install: make symlinks relative
 
 ---
  build/pkgs/gap/spkg-install.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/build/pkgs/gap/spkg-install.in b/build/pkgs/gap/spkg-install.in
-index 32d1fb982c..2ceadf99db 100644
+index 32d1fb9..2ceadf9 100644
 --- a/build/pkgs/gap/spkg-install.in
 +++ b/build/pkgs/gap/spkg-install.in
 @@ -80,8 +80,8 @@ chmod +x "$SAGE_DESTDIR$SAGE_BIN/gap"
@@ -23,5 +23,5 @@ index 32d1fb982c..2ceadf99db 100644
  # Fix the $GAP_ROOT/bin/<arch>/src symlink to be relative (otherwise it links
  # to the actual path of the sources GAP was compiled from)
 -- 
-2.34.1
+cgit v1.0-1-gd88e
 

@@ -1,0 +1,32 @@
+From f767cf1eadfd8ab540a31c5c5ef09d56df09b90e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
+Date: Tue, 21 Dec 2021 13:08:44 -0300
+Subject: sage_docbuild: do not fail when cache cannot be saved
+
+---
+ src/sage_docbuild/__init__.py | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/sage_docbuild/__init__.py b/src/sage_docbuild/__init__.py
+index 8a5c1a1..e188c9b 100644
+--- a/src/sage_docbuild/__init__.py
++++ b/src/sage_docbuild/__init__.py
+@@ -856,9 +856,12 @@ class ReferenceSubBuilder(DocBuilder):
+         Pickle the current reference cache for later retrieval.
+         """
+         cache = self.get_cache()
+-        with open(self.cache_filename(), 'wb') as file:
+-            pickle.dump(cache, file)
+-        logger.debug("Saved the reference cache: %s", self.cache_filename())
++        try:
++            with open(self.cache_filename(), 'wb') as file:
++                pickle.dump(cache, file)
++            logger.debug("Saved the reference cache: %s", self.cache_filename())
++        except PermissionError:
++            logger.debug("Permission denied for the reference cache: %s", self.cache_filename())
+ 
+     def get_sphinx_environment(self):
+         """
+-- 
+cgit v1.0-1-gd88e
+

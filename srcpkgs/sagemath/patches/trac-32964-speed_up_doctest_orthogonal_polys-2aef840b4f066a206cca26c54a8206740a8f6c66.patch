@@ -1,0 +1,151 @@
+From e713a4f9601a066a42174db4a55cb62aee603840 Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Fri, 3 Dec 2021 21:20:34 -0500
+Subject: Trac #32964: speed up a very slow doctest in
+ functions.orthogonal_polys.
+
+I've got 99 problems, and they're slow. One doctest in this module is
+repeating a random test 100 times, taking over four minutes on my
+machine. More tests are better, but in this case, coverage will
+eventually accrue from the number of testers even if we only repeat
+the test once within the file.
+
+Since this particular test is an EXAMPLE, I've also made it a bit more
+user-friendly while eliminating the additional runs.
+
+message for your changes. Lines starting # with '#' will be ignored,
+and an empty message aborts the commit.  # # On branch
+u/mjo/ticket/32964 # Changes to be committed: # modified:
+src/sage/functions/orthogonal_polys.py #
+---
+ src/sage/functions/orthogonal_polys.py | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogonal_polys.py
+index de8a18b..522933e 100644
+--- a/src/sage/functions/orthogonal_polys.py
++++ b/src/sage/functions/orthogonal_polys.py
+@@ -2081,10 +2081,13 @@ class Func_ultraspherical(GinacFunction):
+         sage: gegenbauer(3,2,t)
+         32*t^3 - 12*t
+         sage: _ = var('x')
+-        sage: for N in range(100):
+-        ....:     n = ZZ.random_element(5, 5001)
+-        ....:     a = QQ.random_element().abs() + 5
+-        ....:     assert ((n+1)*ultraspherical(n+1,a,x) - 2*x*(n+a)*ultraspherical(n,a,x) + (n+2*a-1)*ultraspherical(n-1,a,x)).expand().is_zero()
++        sage: n = ZZ.random_element(5, 5001)
++        sage: a = QQ.random_element().abs() + 5
++        sage: s = (  (n+1)*ultraspherical(n+1,a,x)
++        ....:      - 2*x*(n+a)*ultraspherical(n,a,x)
++        ....:      + (n+2*a-1)*ultraspherical(n-1,a,x) )
++        sage: s.expand().is_zero()
++        True
+         sage: ultraspherical(5,9/10,3.1416)
+         6949.55439044240
+         sage: ultraspherical(5,9/10,RealField(100)(pi))
+-- 
+cgit v1.0-1-gd88e
+
+
+From a2343424267d7357c1ab6bec706e3447d6280687 Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Fri, 3 Dec 2021 21:30:57 -0500
+Subject: Trac #32964: replace some uses of var() with SR.var().
+
+This is unrelated to the main purpose of ticket 32964, but while I was
+editing this file, I noticed that several examples use var() to inject
+symbolic expressions into the current scope. This commit changes them
+to use the preferred form `x = SR.var('x')` whose side-effects are
+much easier to predict.
+---
+ src/sage/functions/orthogonal_polys.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogonal_polys.py
+index 522933e..cd845a5 100644
+--- a/src/sage/functions/orthogonal_polys.py
++++ b/src/sage/functions/orthogonal_polys.py
+@@ -1911,7 +1911,7 @@ class Func_hermite(GinacFunction):
+         ...
+         RuntimeError: hermite_eval: The index n must be a nonnegative integer
+ 
+-        sage: _ = var('m x')
++        sage: m,x = SR.var('m,x')
+         sage: hermite(m, x).diff(m)
+         Traceback (most recent call last):
+         ...
+@@ -1962,7 +1962,7 @@ class Func_jacobi_P(OrthogonalFunction):
+ 
+         EXAMPLES::
+ 
+-            sage: _ = var('n a b x')
++            sage: n,a,b,x = SR.var('n,a,b,x')
+             sage: loads(dumps(jacobi_P))
+             jacobi_P
+             sage: jacobi_P(n, a, b, x, hold=True)._sympy_()
+@@ -1976,7 +1976,7 @@ class Func_jacobi_P(OrthogonalFunction):
+         """
+         EXAMPLES::
+ 
+-            sage: _ = var('n a b x')
++            sage: n,a,b,x = SR.var('n,a,b,x')
+             sage: jacobi_P(1,n,n,n)
+             (n + 1)*n
+             sage: jacobi_P(2,n,n,n)
+@@ -2080,7 +2080,7 @@ class Func_ultraspherical(GinacFunction):
+         sage: t = PolynomialRing(RationalField(),"t").gen()
+         sage: gegenbauer(3,2,t)
+         32*t^3 - 12*t
+-        sage: _ = var('x')
++        sage: x = SR.var('x')
+         sage: n = ZZ.random_element(5, 5001)
+         sage: a = QQ.random_element().abs() + 5
+         sage: s = (  (n+1)*ultraspherical(n+1,a,x)
+@@ -2093,7 +2093,7 @@ class Func_ultraspherical(GinacFunction):
+         sage: ultraspherical(5,9/10,RealField(100)(pi))
+         6949.4695419382702451843080687
+ 
+-        sage: _ = var('a n')
++        sage: a,n = SR.var('a,n')
+         sage: gegenbauer(2,a,x)
+         2*(a + 1)*a*x^2 - a
+         sage: gegenbauer(3,a,x)
+-- 
+cgit v1.0-1-gd88e
+
+
+From 9b2f042147b4d25c5d7e1776bfb4b5c76db9d97b Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Fri, 3 Dec 2021 21:39:43 -0500
+Subject: Trac #32964: fix failing doctest in functions.orthogonal_polys.
+
+One of the examples in this module is expecting a doctest warning, but
+that warning is only emitted the first time it happens. When testing
+with
+
+  sage -t --file-iterations=2
+
+the warning does not appear in the second pass, and the test (that is
+expecting it) fails. This commit adds some more "..." to support both
+possible outcomes.
+---
+ src/sage/functions/orthogonal_polys.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/sage/functions/orthogonal_polys.py b/src/sage/functions/orthogonal_polys.py
+index cd845a5..beb4f2d 100644
+--- a/src/sage/functions/orthogonal_polys.py
++++ b/src/sage/functions/orthogonal_polys.py
+@@ -495,8 +495,7 @@ class ChebyshevFunction(OrthogonalFunction):
+             sage: chebyshev_T(5,Qp(3)(2))
+             2 + 3^2 + 3^3 + 3^4 + 3^5 + O(3^20)
+             sage: chebyshev_T(100001/2, 2)
+-            doctest:...: RuntimeWarning: mpmath failed, keeping expression unevaluated
+-            chebyshev_T(100001/2, 2)
++            ...chebyshev_T(100001/2, 2)
+             sage: chebyshev_U._eval_(1.5, Mod(8,9)) is None
+             True
+         """
+-- 
+cgit v1.0-1-gd88e
+
