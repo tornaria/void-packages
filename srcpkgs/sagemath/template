@@ -22,7 +22,8 @@ distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
 checksum=124f3d23ce6442ecc84ed98e3c035e0d00c8261c3125712e4742c32e731d13de
 python_version=3
 
-build_options="system_python3"
+build_options="debug system_python3"
+desc_option_debug="Build with debug symbols"
 desc_option_system_python="Build using system python 3"
 build_options_default="system_python3"
 configure_args+=" $(vopt_with system_python3)"
@@ -120,7 +121,7 @@ noshlibprovides=yes
 _no_python_shebang=yes
 
 # compile python code in sage venv
-pycompile_dirs="$_SAGE_ROOT/venv"
+pycompile_dirs="$_SAGE_ROOT/venv/"
 
 post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
@@ -139,6 +140,12 @@ do_clean() {
 
 pre_configure() {
 	./bootstrap
+
+	if [ "$build_option_debug" ]; then
+		export SAGE_DEBUG=yes
+	fi
+
+	export MAKE="make -j ${XBPS_MAKEJOBS}"
 }
 
 # DISABLED pytest since it brings more harm than good
@@ -179,7 +186,7 @@ do_install() {
 do_check() {
 	TEST=--all
 	if [ -f ${XBPS_DISTDIR}/sagemath-check ] ; then
-		TEST="$(grep -v "^#" ${XBPS_DISTDIR}/sagemath-check)"
+		TEST="$(sed -e 's/#.*//' ${XBPS_DISTDIR}/sagemath-check)"
 	fi
 	# the default is "sage,dochtml,optional,build", we skip dochtml
 	OPT="--optional sage,optional,build"
