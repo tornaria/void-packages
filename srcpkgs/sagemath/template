@@ -129,15 +129,23 @@ pre_configure() {
 # }
 
 do_install() {
-	vcopy $_SAGE_ROOT usr/lib/
-	# cleanup: upstream packages and build artifacts
-	rm -rf ${DESTDIR}/$_SAGE_ROOT/upstream
-	#rm -rf ${DESTDIR}/$_SAGE_ROOT/pkgs/*/build
-	# more cleanup
-	for d in .ci .circleci .git .github autom4te.cache config docker m4
-	do
-		rm -rf ${DESTDIR}/$_SAGE_ROOT/$d
+	vlicense COPYING.txt
+	vdoc README.md
+	vmkdir $_SAGE_ROOT
+	vcopy "VERSION.txt prefix sage venv" $_SAGE_ROOT
+	vmkdir $_SAGE_ROOT/local
+	for f in bin include lib share; do
+		vcopy local/$f $_SAGE_ROOT/local
 	done
+	vmkdir $_SAGE_ROOT/$(readlink venv)
+	for f in pyvenv.cfg bin etc lib share; do
+		vcopy venv/$f $_SAGE_ROOT/venv/
+	done
+	vcopy "src" $_SAGE_ROOT # only src/sage ?
+
+	# not needed ?
+	# Maybe pkgs/sagemath-standard/build/cythonized for debug
+	#vcopy "build pkgs" $_SAGE_ROOT
 
 	# symlink main binary
 	vmkdir usr/bin
