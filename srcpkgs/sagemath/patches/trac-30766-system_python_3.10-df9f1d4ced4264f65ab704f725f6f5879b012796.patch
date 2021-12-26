@@ -1,0 +1,263 @@
+From e65ae6ca71fbe284affeb4ed88e63acc97a3fe0a Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Mon, 24 May 2021 17:06:47 -0700
+Subject: build/pkgs/python3/spkg-configure.m4: Accept system python 3.10.x
+
+---
+ build/pkgs/python3/spkg-configure.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/pkgs/python3/spkg-configure.m4 b/build/pkgs/python3/spkg-configure.m4
+index df74019..3cbb994 100644
+--- a/build/pkgs/python3/spkg-configure.m4
++++ b/build/pkgs/python3/spkg-configure.m4
+@@ -1,7 +1,7 @@
+ SAGE_SPKG_CONFIGURE([python3], [
+    m4_pushdef([MIN_VERSION],               [3.7.0])
+    m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.7.0])
+-   m4_pushdef([LT_VERSION],                [3.10.0])
++   m4_pushdef([LT_VERSION],                [3.11.0])
+    AC_ARG_WITH([python],
+                [AS_HELP_STRING([--with-python=PYTHON3],
+                                [Python 3 executable to use for the Sage venv; default: python3])])
+-- 
+cgit v1.0-1-gd88e
+
+
+From 59173d01b4ed85077a847d2643c80bb3499c926a Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Wed, 15 Sep 2021 17:49:12 -0700
+Subject: pkgs/sage-setup/setup.cfg: Allow Python 3.10
+
+---
+ pkgs/sage-setup/setup.cfg | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pkgs/sage-setup/setup.cfg b/pkgs/sage-setup/setup.cfg
+index a1710d4..197fc67 100644
+--- a/pkgs/sage-setup/setup.cfg
++++ b/pkgs/sage-setup/setup.cfg
+@@ -31,7 +31,7 @@ packages =
+     sage_setup.autogen.interpreters.specs
+     sage_setup.command
+ 
+-python_requires = >=3.7, <3.10
++python_requires = >=3.7, <3.11
+ 
+ install_requires =
+     pkgconfig
+-- 
+cgit v1.0-1-gd88e
+
+
+From c902b7bc44c1b2116416962ec1194b8e59f11f06 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Fri, 17 Dec 2021 09:15:25 -0800
+Subject: src/setup.cfg.m4: Allow Python 3.10
+
+---
+ src/setup.cfg.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/setup.cfg.m4 b/src/setup.cfg.m4
+index 16f88f2..b8bd0c0 100644
+--- a/src/setup.cfg.m4
++++ b/src/setup.cfg.m4
+@@ -26,7 +26,7 @@ classifiers =
+     Topic :: Scientific/Engineering :: Mathematics
+ 
+ [options]
+-python_requires = >=3.7, <3.10
++python_requires = >=3.7, <3.11
+ install_requires =
+     sage_conf
+     esyscmd(`sage-get-system-packages install-requires \
+-- 
+cgit v1.0-1-gd88e
+
+
+From cb305525af1f872d00bb63387f7c68b88fb70a38 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Fri, 17 Dec 2021 09:38:43 -0800
+Subject: build/pkgs/python3/spkg-configure.m4: Warn on system python 3.10.x
+
+---
+ build/pkgs/python3/spkg-configure.m4 | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/build/pkgs/python3/spkg-configure.m4 b/build/pkgs/python3/spkg-configure.m4
+index 3cbb994..5e3481a 100644
+--- a/build/pkgs/python3/spkg-configure.m4
++++ b/build/pkgs/python3/spkg-configure.m4
+@@ -1,6 +1,7 @@
+ SAGE_SPKG_CONFIGURE([python3], [
+    m4_pushdef([MIN_VERSION],               [3.7.0])
+    m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.7.0])
++   m4_pushdef([LT_STABLE_VERSION],         [3.10.0])
+    m4_pushdef([LT_VERSION],                [3.11.0])
+    AC_ARG_WITH([python],
+                [AS_HELP_STRING([--with-python=PYTHON3],
+@@ -116,6 +117,10 @@ and will be removed in the next development cycle.  Consider using a newer versi
+ that may be available on your system or can be installed using the system package manager.
+ To build Sage with a different system python, use ./configure --with-python=/path/to/python])
+         ])
++        AX_COMPARE_VERSION([$python3_version], [ge], LT_STABLE_VERSION, [
++            AC_MSG_WARN([Support for system python >= LT_STABLE_VERSION is experimental.
++To build Sage with a different system python, use ./configure --with-python=/path/to/python])
++        ])
+     ])
+     AC_SUBST([PYTHON_FOR_VENV])
+ 
+-- 
+cgit v1.0-1-gd88e
+
+
+From 249357dd30c54162e4b9204d6113c70b310a5087 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sat, 18 Dec 2021 13:35:21 -0800
+Subject: sage.cpython.atexit: fix for python 3.10 (#30766)
+
+---
+ src/sage/cpython/atexit.pyx | 75 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 48 insertions(+), 27 deletions(-)
+
+diff --git a/src/sage/cpython/atexit.pyx b/src/sage/cpython/atexit.pyx
+index 5b0c6d1..3ba391b 100644
+--- a/src/sage/cpython/atexit.pyx
++++ b/src/sage/cpython/atexit.pyx
+@@ -144,43 +144,63 @@ cdef class restore_atexit:
+ 
+ from cpython.ref cimport PyObject
+ 
+-# Internal structures defined in the CPython source in
+-# Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
+-# https://bugs.python.org/issue32082 for a request to (eventually)
+-# re-expose more of the atexit module's internals to Python
+-ctypedef struct atexit_callback:
+-    PyObject* func
+-    PyObject* args
+-    PyObject* kwargs
+-
+-
+-ctypedef struct atexitmodule_state:
+-    atexit_callback** atexit_callbacks
+-    int ncallbacks
+-    int callback_len
+-
+-
+-cdef extern from "Python.h":
+-    void* PyModule_GetState(object module)
+-
++# Implement "_atexit_callbacks()" for each supported python version
++cdef extern from *:
++    """
++    #if PY_VERSION_HEX >= 0x030a0000
++    /********** Python 3.10 **********/
++    #define Py_BUILD_CORE
++    #undef _PyGC_FINALIZED
++    #include "internal/pycore_interp.h"
++    #include "internal/pycore_pystate.h"
++    static atexit_callback ** _atexit_callbacks(PyObject *self) {
++        PyInterpreterState *interp = _PyInterpreterState_GET();
++        struct atexit_state state = interp->atexit;
++        return state.callbacks;
++    }
++    #else
++    /********** Python < 3.10 **********/
++    /* Internal structures defined in the CPython source in
++     * Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
++     * https://bugs.python.org/issue32082 for a request to (eventually)
++     * re-expose more of the atexit module's internals to Python
++     * typedef struct
++     */
++    typedef struct {
++        PyObject *func;
++        PyObject *args;
++        PyObject *kwargs;
++    } atexit_callback;
++    typedef struct {
++        atexit_callback **atexit_callbacks;
++        int ncallbacks;
++        int callback_len;
++    } atexitmodule_state;
++    static atexit_callback ** _atexit_callbacks(PyObject *self) {
++        atexitmodule_state *state = PyModule_GetState(self);
++        return state->atexit_callbacks;
++    }
++    #endif
++    """
++    ctypedef struct atexit_callback:
++        PyObject* func
++        PyObject* args
++        PyObject* kwargs
++    atexit_callback** _atexit_callbacks(object module)
+ 
+ def _get_exithandlers():
+     """Return list of exit handlers registered with the atexit module."""
+-    cdef atexitmodule_state* state
++    cdef atexit_callback ** callbacks
+     cdef atexit_callback callback
+     cdef list exithandlers
+     cdef int idx
+     cdef object kwargs
+ 
+-    state = <atexitmodule_state*>PyModule_GetState(atexit)
+-
+-    if not state:
+-        raise RuntimeError("atexit module state missing or corrupt")
+-
+     exithandlers = []
++    callbacks = _atexit_callbacks(atexit)
+ 
+-    for idx in range(state.ncallbacks):
+-        callback = state.atexit_callbacks[idx][0]
++    for idx in range(atexit._ncallbacks()):
++        callback = callbacks[idx][0]
+         if callback.kwargs:
+             kwargs = <object>callback.kwargs
+         else:
+@@ -207,4 +227,5 @@ def _set_exithandlers(exithandlers):
+ 
+ def _clear_exithandlers():
+     """Clear the atexit module of all registered exit handlers."""
++
+     atexit._clear()
+-- 
+cgit v1.0-1-gd88e
+
+
+From df9f1d4ced4264f65ab704f725f6f5879b012796 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
+Date: Sun, 19 Dec 2021 22:36:44 -0300
+Subject: Pass float(0.5) to time.sleep
+
+Since python 3.10, passing RealNumber breaks.
+---
+ src/sage_docbuild/utils.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/sage_docbuild/utils.py b/src/sage_docbuild/utils.py
+index 956d703f..3e4793e 100644
+--- a/src/sage_docbuild/utils.py
++++ b/src/sage_docbuild/utils.py
+@@ -79,7 +79,7 @@ def build_many(target, args, processes=None):
+         ....:         # Task 4 is a poison pill
+         ....:         1 / 0
+         ....:     else:
+-        ....:         time.sleep(0.5)
++        ....:         time.sleep(float(0.5))
+         ....:         print('Processed task %s' % N)
+         ....:
+ 
+@@ -104,7 +104,7 @@ def build_many(target, args, processes=None):
+         ....:         # Task 4 is a poison pill
+         ....:         os.kill(os.getpid(), signal.SIGKILL)
+         ....:     else:
+-        ....:         time.sleep(0.5)
++        ....:         time.sleep(float(0.5))
+         ....:         print('Processed task %s' % N)
+         ....:
+         sage: build_many(target, range(8), processes=8)
+-- 
+cgit v1.0-1-gd88e
+

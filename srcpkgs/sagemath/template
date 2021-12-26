@@ -1,6 +1,6 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=9.5.beta8
+version=9.5.beta9
 revision=1
 wrksrc=sage-$version
 build_style=configure
@@ -19,7 +19,7 @@ maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-or-later"
 homepage="http://sagemath.org/"
 distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
-checksum=124f3d23ce6442ecc84ed98e3c035e0d00c8261c3125712e4742c32e731d13de
+checksum=32ca429c0bdbb90c9999bca4ba858d1def280425d42048c4230dae005de2a0d1
 python_version=3
 
 build_options="debug system_python3"
@@ -36,24 +36,9 @@ case ${version} in
 	*.beta*|*.rc*) distfiles=${distfiles/sage\/src/sage\/devel} ;;
 esac
 
-# extra upstream packages (trac-30766 / trac-32968 / trac-33020 / trac-33040)
+# extra upstream packages (trac-32968 / trac-33040)
 _upstream="
- https://pypi.io/packages/source/i/ipython/ipython-7.29.0.tar.gz
- https://pypi.io/packages/source/i/ipykernel/ipykernel-6.5.1.tar.gz
- https://pypi.io/packages/source/i/ipywidgets/ipywidgets-7.6.5.tar.gz
- https://pypi.io/packages/source/j/jedi/jedi-0.18.1.tar.gz
- https://pypi.io/packages/source/p/prompt_toolkit/prompt_toolkit-3.0.22.tar.gz
- https://pypi.io/packages/source/w/widgetsnbextension/widgetsnbextension-3.5.2.tar.gz
- https://pypi.io/packages/source/t/terminado/terminado-0.12.1.tar.gz
- https://pypi.io/packages/source/n/notebook/notebook-6.4.6.tar.gz
- https://pypi.io/packages/source/n/nbclient/nbclient-0.5.9.tar.gz
- https://pypi.io/packages/source/j/jupyter_client/jupyter_client-7.1.0.tar.gz
- https://pypi.io/packages/source/j/jupyter_core/jupyter_core-4.9.1.tar.gz
- https://pypi.io/packages/source/i/importlib_metadata/importlib_metadata-4.8.2.tar.gz
-
  https://pypi.io/packages/source/s/sphinx/Sphinx-4.3.1.tar.gz
-
- https://pypi.io/packages/source/i/ipykernel/ipykernel-6.6.0.tar.gz
 
  https://files.pythonhosted.org/packages/source/c/cycler/cycler-0.11.0.tar.gz
  https://files.pythonhosted.org/packages/source/k/kiwisolver/kiwisolver-1.3.2.tar.gz
@@ -69,22 +54,7 @@ _upstream="
 "
 
 checksum+="
- 4f69d7423a5a1972f6347ff233e38bbf4df6a150ef20fbb00c635442ac3060aa
- dd27172bccbbcfef952991e49372e4c6fd1c14eed0df05ebd5b4335cb27a81a2
- 00974f7cb4d5f8d494c19810fedb9fa9b64bffd3cda7c2be23c133a1ad3c99c5
- 74137626a64a99c8eb6ae5832d99b3bdd7d29a3850fe2aa80a4126b2a7d949ab
- 449f333dd120bd01f5d296a8ce1452114ba3a71fae7288d2f0ae2c918764fa72
- e0731a60ba540cd19bbbefe771a9076dcd2dde90713a8f87f27f53f2d1db7727
- b20fd93cc57c1678c799799d117874367cc07a3d2d55be95205b1a88fa08393f
- 7bcdf79bd1cda534735bd9830d2cbedab4ee34d8fe1df6e7b946b3aab0902ba3
- 99e46ddafacd0b861293bf246fed8540a184adfa3aa7d641f89031ec070701e0
- a5f995a73cffb314ed262713ae6dfce53c6b8216cea9f332071b8ff44a6e1654
- dce8a7499da5a53ae3afd5a9f4b02e5df1d57250cf48f3ad79da23b4778cd6fa
- 75bdec14c397f528724c1bfd9709d660b33a4d2e77387a3358f20b848bb5e5fb
-
  32a5b3e9a1b176cc25ed048557d4d3d01af635e6b76c5bc7a43b0a34447fbd45
-
- 3a227788216b43982d9ac28195949467627b0d16e6b8af9741d95dcaa8c41a89
 
  9c87405839a19696e837b3b818fed3f5f69f16f1eec1a1ad77e043dcea9c772f
  fc4453705b81d03568d5b808ad8f09c77c47534f6ac2e72e733f9ca4714aa75c
@@ -167,13 +137,6 @@ do_install() {
 	for d in .ci .circleci .git .github autom4te.cache config docker m4
 	do
 		rm -rf ${DESTDIR}/$_SAGE_ROOT/$d
-	done
-	# keep required empty dirs
-	for d in local/share/doc/sage/html/en/{docname,tutorial,reference} \
-	         local/share/doc/sage/doctrees/en/{docname,tutorial}
-	do
-		mkdir -p ${DESTDIR}/$_SAGE_ROOT/$d
-		touch ${DESTDIR}/$_SAGE_ROOT/$d/.empty
 	done
 
 	# symlink main binary
