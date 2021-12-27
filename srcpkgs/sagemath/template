@@ -16,7 +16,7 @@ depends="giac git FlintQS zn_poly sympow
  "
 short_desc="Open source mathematics software"
 maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
-license="GPL-3.0-or-later"
+license="GPL-3.0-only, GPL-2.0-or-later, CC-BY-SA-3.0, custom:Various free"
 homepage="http://sagemath.org/"
 distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
 checksum=32ca429c0bdbb90c9999bca4ba858d1def280425d42048c4230dae005de2a0d1
@@ -155,15 +155,17 @@ do_install() {
 }
 
 do_check() {
-	TEST=--all
 	if [ -f ${XBPS_DISTDIR}/sagemath-check ] ; then
-		TEST="$(sed -e 's/#.*//' ${XBPS_DISTDIR}/sagemath-check)"
+		_test_args=$(sed -e 's/#.*//;/^\s*$/d' ${XBPS_DISTDIR}/sagemath-check)
 	fi
-	# the default is "sage,dochtml,optional,build", we skip dochtml
-	OPT="--optional sage,optional,build"
+	if [ -z "$_test_args" ]; then
+		_test_args=--all
+	fi
+	if [ "$XBPS_CHECK_PKGS" = full ]; then
+		_test_args="--long $_test_args"
+	fi
 	# since make check will build the docs, run test like this instead
-	./sage -tp ${XBPS_MAKEJOBS} ${OPT} ${TEST}
-	#./sage -t ${OPT} ${TEST}
+	./sage -tp ${XBPS_MAKEJOBS} ${_test_args}
 }
 
 ### copied from sage-deps, to be kept in sync
