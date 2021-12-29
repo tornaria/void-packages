@@ -1,0 +1,13 @@
+diff --git a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
+index 7d319bd54b..c1a2eed6f1 100644
+--- a/src/sage/matrix/matrix2.pyx
++++ b/src/sage/matrix/matrix2.pyx
+@@ -17215,7 +17215,7 @@ cdef class Matrix(Matrix1):
+ 
+             sage: set_random_seed()
+             sage: K = random_cone(max_ambient_dim=5)
+-            sage: all(L.change_ring(SR).is_Z_operator_on(K)
++            sage: all(L.change_ring(SR).is_Z_operator_on(K) # long time
+             ....:     for L in K.Z_operators_gens())  # long time
+             True
+ 
