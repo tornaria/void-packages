@@ -22,11 +22,13 @@ distfiles="https://mirrors.mit.edu/sage/src/sage-$version.tar.gz"
 checksum=32ca429c0bdbb90c9999bca4ba858d1def280425d42048c4230dae005de2a0d1
 python_version=3
 
-build_options="debug system_python3"
+build_options="debug system_python3 system_site_packages"
 desc_option_debug="Build with debug symbols"
 desc_option_system_python="Build using system python 3"
-build_options_default="system_python3"
+desc_option_system_python="Build using system python site-packages"
+build_options_default="system_python3 system_site_packages"
 configure_args+=" $(vopt_with system_python3)"
+configure_args+=" $(vopt_enable system_site_packages)"
 
 # path where sage will be installed
 _SAGE_ROOT=/usr/lib/sage-${version}
@@ -163,6 +165,8 @@ do_check() {
 	fi
 	if [ "$XBPS_CHECK_PKGS" = full ]; then
 		_test_args="--long $_test_args"
+	else
+		_test_args="--warn-long 5.0 $_test_args"
 	fi
 	# since make check will build the docs, run test like this instead
 	./sage -tp ${XBPS_MAKEJOBS} ${_test_args}
@@ -182,7 +186,7 @@ makedepends+=" automake gettext gettext-devel"
 # other host dependencies
 makedepends+=" cmake curl git ninja pandoc patch pkg-config python3 tox"
 
-# already in void
+# standard dependencies
 makedepends+="
  CoinMP-devel R arb-devel boost-devel bzip2-devel ecl eclib-devel
  ecm-devel flintlib-devel freetype-devel gc-devel gd-devel giac-devel
@@ -202,7 +206,49 @@ makedepends+="
  brial-devel cliquer-devel gfan libbraiding-devel libhomfly-devel
  lrcalc-devel nauty-devel palp tachyon
  maxima-ecl primesieve-devel primecount-devel
+ ffmpeg ImageMagick
 "
 
 # TODO: optional
 # 4ti2 coxeter3 libsemigroups lrslib pdf2svg perl_mongodb polymake
+
+# TODO: standard
+# cvxopt importlib_resources
+
+# python packages for trac-29665
+_sage_python3_modules="
+ python3-Babel python3-Jinja2 python3-MarkupSafe python3-Pillow
+ python3-Pygments python3-Sphinx python3-alabaster python3-argcomplete
+ python3-argon2 python3-attrs python3-backcall python3-beniget
+ python3-bleach python3-certifi python3-cffi python3-charset-normalizer
+ python3-cycler python3-dateutil python3-decorator python3-defusedxml
+ python3-docutils python3-entrypoints python3-flit_core python3-gast
+ python3-gmpy2 python3-html5lib python3-idna python3-imagesize
+ python3-importlib_metadata python3-ipython python3-ipython_genutils
+ python3-ipython_ipykernel python3-jedi python3-jsonschema
+ python3-jupyter_client python3-jupyter_core python3-jupyter_ipywidgets
+ python3-jupyter_nbconvert python3-jupyter_nbformat
+ python3-jupyter_notebook python3-jupyterlab_pygments python3-kiwisolver
+ python3-matplotlib python3-matplotlib-inline python3-mistune
+ python3-mpmath python3-nbclient python3-nest_asyncio python3-networkx
+ python3-numpy python3-packaging python3-pandocfilters python3-parsing
+ python3-parso python3-pexpect python3-pickleshare python3-pip
+ python3-pkgconfig python3-pluggy python3-ply python3-prometheus_client
+ python3-prompt_toolkit python3-ptyprocess python3-py python3-pybind11
+ python3-pycparser python3-pyrsistent python3-pytz python3-pyzmq
+ python3-requests python3-scipy python3-send2trash python3-setuptools
+ python3-setuptools_scm python3-simplegeneric python3-six
+ python3-snowballstemmer python3-sphinxcontrib-applehelp
+ python3-sphinxcontrib-devhelp python3-sphinxcontrib-htmlhelp
+ python3-sphinxcontrib-jsmath python3-sphinxcontrib-qthelp
+ python3-sphinxcontrib-serializinghtml python3-sympy python3-terminado
+ python3-testpath python3-texttable python3-toml python3-tomli
+ python3-tornado python3-traitlets python3-typing_extensions
+ python3-tzlocal python3-urllib3 python3-wcwidth python3-webencodings
+ python3-wheel python3-zipp pythran
+ "
+
+if [ "$build_option_system_site_packages" ]; then
+	makedepends+=" $_sage_python3_modules"
+	depends+=" $_sage_python3_modules"
+fi
