@@ -1,14 +1,14 @@
 From 424de0923cb3d44d010e3e2f9bd7bc75d5c30234 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
 Date: Sun, 26 Dec 2021 22:34:39 -0300
-Subject: [PATCH] sage-site: exec only if it is executable
+Subject: sage-site: exec only if it is executable
 
 ---
  src/bin/sage | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/src/bin/sage b/src/bin/sage
-index 4c0fa17426..153e610a2e 100755
+index 4c0fa17..153e610 100755
 --- a/src/bin/sage
 +++ b/src/bin/sage
 @@ -129,7 +129,7 @@ usage() {
@@ -39,5 +39,5 @@ index 4c0fa17426..153e610a2e 100755
              # fallthrough if there is no sage-site script
          fi
 -- 
-2.34.1
+cgit v1.0-1-gd88e
 
