@@ -1,0 +1,11 @@
+--- a/build/sage_bootstrap/tarball.py	2022-01-07 19:17:06.754747955 -0300
++++ b/build/sage_bootstrap/tarball.py	2022-01-07 19:25:31.844139381 -0300
+@@ -158,6 +158,8 @@
+                             .format(destination=destination))
+         successful_download = False
+         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
++        log.info('ERROR: downloading is disabled, add file to template instead')
++        return
+         for mirror in MirrorList():
+             url = mirror + '/'.join(['spkg', 'upstream', self.package.name, self.filename])
+             log.info(url)
