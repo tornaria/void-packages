@@ -1,4 +1,4 @@
-From f767cf1eadfd8ab540a31c5c5ef09d56df09b90e Mon Sep 17 00:00:00 2001
+From e89193f4f32246ad9ded6d37f1f2f12a589a81f4 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
 Date: Tue, 21 Dec 2021 13:08:44 -0300
 Subject: sage_docbuild: do not fail when cache cannot be saved
@@ -8,7 +8,7 @@ Subject: sage_docbuild: do not fail when cache cannot be saved
  1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/src/sage_docbuild/__init__.py b/src/sage_docbuild/__init__.py
-index 8a5c1a1..e188c9b 100644
+index 466ca82..f8c8ebd 100644
 --- a/src/sage_docbuild/__init__.py
 +++ b/src/sage_docbuild/__init__.py
 @@ -856,9 +856,12 @@ class ReferenceSubBuilder(DocBuilder):

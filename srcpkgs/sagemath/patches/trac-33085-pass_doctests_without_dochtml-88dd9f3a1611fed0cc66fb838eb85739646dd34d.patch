@@ -1,4 +1,4 @@
-From 7d3381b21e4716cfa8a33915621a12f0eba74233 Mon Sep 17 00:00:00 2001
+From 18d0477153af6f453a0e84f78030535f6a36ce87 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
 Date: Sun, 26 Dec 2021 18:21:18 -0300
 Subject: doctests: remove dochtml label from some tests that don't need docs
@@ -10,56 +10,56 @@ Subject: doctests: remove dochtml label from some tests that don't need docs
  2 files changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/src/sage/docs/conf.py b/src/sage/docs/conf.py
-index f2efb65..da41efa 100644
+index c788623..527ed90 100644
 --- a/src/sage/docs/conf.py
 +++ b/src/sage/docs/conf.py
 @@ -719,8 +719,8 @@ def call_intersphinx(app, env, node, contnode):
      Check that the link from the thematic tutorials to the reference
      manual is relative, see :trac:`20118`::
  
--        sage: from sage.env import SAGE_DOC  # optional - dochtml
--        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")  # optional - dochtml
+-        sage: from sage.env import SAGE_DOC  # optional - sagemath_doc_html
+-        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")  # optional - sagemath_doc_html
 +        sage: from sage.env import SAGE_DOC
 +        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")
-         sage: for line in open(thematic_index).readlines():  # optional - dochtml
+         sage: for line in open(thematic_index).readlines():  # optional - sagemath_doc_html
          ....:     if "padics" in line:
          ....:         _ = sys.stdout.write(line)
 diff --git a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
-index eb70516..b4848ed 100644
+index 4c56aea..583ca06 100644
 --- a/src/sage/misc/sagedoc.py
 +++ b/src/sage/misc/sagedoc.py
 @@ -18,8 +18,8 @@ TESTS:
  Check that argspecs of extension function/methods appear correctly,
  see :trac:`12849`::
  
--    sage: from sage.env import SAGE_DOC  # optional - dochtml
--    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')  # optional - dochtml
+-    sage: from sage.env import SAGE_DOC  # optional - sagemath_doc_html
+-    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')  # optional - sagemath_doc_html
 +    sage: from sage.env import SAGE_DOC
 +    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')
-     sage: with open(docfilename) as fobj:  # optional - dochtml
+     sage: with open(docfilename) as fobj:  # optional - sagemath_doc_html
      ....:     for line in fobj:
      ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
-@@ -839,12 +839,12 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
+@@ -845,12 +845,12 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
  
      ::
  
--        sage: from sage.misc.sagedoc import _search_src_or_doc  # optional - dochtml
--        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1  # optional - dochtml
+-        sage: from sage.misc.sagedoc import _search_src_or_doc  # optional - sagemath_doc_html
+-        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1  # optional - sagemath_doc_html
 +        sage: from sage.misc.sagedoc import _search_src_or_doc
 +        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1
          True
-         sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # optional - dochtml, long time (4s on sage.math, 2012)
+         sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # optional - sagemath_doc_html, long time (4s on sage.math, 2012)
          True
--        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)  # optional - dochtml
+-        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)  # optional - sagemath_doc_html
 +        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)
          True
  
      When passing ``interactive=True``, in a terminal session this will pass the
-@@ -1363,7 +1363,7 @@ class _sage_doc:
+@@ -1369,7 +1369,7 @@ class _sage_doc:
  
-         sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - dochtml, indirect doctest
+         sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html, indirect doctest
          'http://localhost:8000/doc/live/reference/index.html'
--        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]  # optional - dochtml
+-        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]  # optional - sagemath_doc_html
 +        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]
          'Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring'
      """
@@ -68,7 +68,7 @@ index eb70516..b4848ed 100644
 cgit v1.0-1-gd88e
 
 
-From 42a76c3f82edecc9c6c53c661251677e3e907584 Mon Sep 17 00:00:00 2001
+From 88dd9f3a1611fed0cc66fb838eb85739646dd34d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
 Date: Sun, 26 Dec 2021 18:22:13 -0300
 Subject: doctests: add dochtml label to some tests that need docs installed
@@ -78,7 +78,7 @@ Subject: doctests: add dochtml label to some tests that need docs installed
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/src/sage_docbuild/__init__.py b/src/sage_docbuild/__init__.py
-index 4a71c91..dd233bd 100644
+index f8c8ebd..d329009 100644
 --- a/src/sage_docbuild/__init__.py
 +++ b/src/sage_docbuild/__init__.py
 @@ -105,7 +105,7 @@ def builder_helper(type):
@@ -86,7 +86,7 @@ index 4a71c91..dd233bd 100644
          sage: from sage_docbuild import _build_many as build_many
          sage: helper = builder_helper("html")
 -        sage: try:
-+        sage: try:  # optional - dochtml
++        sage: try:  # optional - sagemath_doc_html
          ....:     build_many(build_ref_doc, [("docname", "en", "html", {})])
          ....: except Exception as E:
          ....:     "Non-exception during docbuild: abort pool operation" in str(E)
@@ -95,7 +95,7 @@ index 4a71c91..dd233bd 100644
              sage: from sage_docbuild import DocBuilder
              sage: b = DocBuilder('tutorial')
 -            sage: b._output_dir('html')
-+            sage: b._output_dir('html')         # optional - dochtml
++            sage: b._output_dir('html')         # optional - sagemath_doc_html
              '.../html/en/tutorial'
          """
          d = os.path.join(SAGE_DOC, type, self.lang, self.name)
@@ -104,7 +104,7 @@ index 4a71c91..dd233bd 100644
              sage: from sage_docbuild import DocBuilder
              sage: b = DocBuilder('tutorial')
 -            sage: b._doctrees_dir()
-+            sage: b._doctrees_dir()             # optional - docthml
++            sage: b._doctrees_dir()             # optional - sagemath_doc_html
              '.../doctrees/en/tutorial'
          """
          d = os.path.join(SAGE_DOC, 'doctrees', self.lang, self.name)
@@ -113,7 +113,7 @@ index 4a71c91..dd233bd 100644
              sage: from sage_docbuild import ReferenceBuilder
              sage: b = ReferenceBuilder('reference')
 -            sage: b._output_dir('html')
-+            sage: b._output_dir('html')         # optional - dochtml
++            sage: b._output_dir('html')         # optional - sagemath_doc_html
              '.../html/en/reference'
          """
          if lang is None:
@@ -122,56 +122,10 @@ index 4a71c91..dd233bd 100644
              sage: from sage_docbuild import ReferenceTopBuilder
              sage: b = ReferenceTopBuilder('reference')
 -            sage: b._output_dir('html')
-+            sage: b._output_dir('html')         # optional - dochtml
++            sage: b._output_dir('html')         # optional - sagemath_doc_html
              '.../html/en/reference'
          """
          if lang is None:
--- 
-cgit v1.0-1-gd88e
-
-
-From 4e364ea702799d8ddee23d306ea6622f2ac412ce Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
-Date: Sun, 26 Dec 2021 18:22:49 -0300
-Subject: doctests: use dochtml as default option only when html docs are
- installed
-
----
- src/bin/sage-runtests | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/src/bin/sage-runtests b/src/bin/sage-runtests
-index 589dc8c..6e6fa5b 100755
---- a/src/bin/sage-runtests
-+++ b/src/bin/sage-runtests
-@@ -8,6 +8,7 @@ import sys
- DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
-                                                    '.sage'))
- SAGE_ROOT = os.environ.get('SAGE_ROOT')
-+SAGE_DOC = os.environ.get('SAGE_DOC')
- 
- # Override to not pick up user configuration, see Trac #20270
- os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
-@@ -15,7 +16,7 @@ os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
- 
- def _get_optional_defaults():
-     """Return the default value for the --optional flag."""
--    optional = ['sage', 'dochtml', 'optional']
-+    optional = ['sage', 'optional']
- 
-     # This should be good-enough to determine if we are in a sage source
-     # repository working tree
-@@ -24,6 +25,10 @@ def _get_optional_defaults():
-             os.path.isfile(os.path.join(SAGE_ROOT, 'sage'))):
-         optional.append('build')
- 
-+    # Check if the html docs are installed
-+    if (SAGE_DOC and os.path.isdir(os.path.join(SAGE_DOC, 'html'))):
-+        optional.append('dochtml')
-+
-     return ','.join(optional)
- 
- 
 -- 
 cgit v1.0-1-gd88e
 

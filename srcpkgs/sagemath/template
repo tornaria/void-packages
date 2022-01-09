@@ -1,6 +1,6 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=9.5.beta9
+version=9.5.rc0
 revision=1
 wrksrc=sage-$version
 build_style=configure
@@ -19,7 +19,7 @@ maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-only, GPL-2.0-or-later, CC-BY-SA-3.0, custom:Various free"
 homepage="http://sagemath.org/"
 distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
-checksum=aea4c5a8d3b32af2fba644269b9daf4f62471471ba2d7d83da0f8098a5f53225
+checksum=8012e3ac35290fa9b2cb837eeca149925784c2378b486731226944e4afd8a4e6
 python_version=3
 
 build_options="debug system_python3 system_site_packages"
@@ -128,7 +128,7 @@ nostrip=yes
 noshlibprovides=yes
 
 # don't rewrite python shebang as sage uses its own python (for now)
-_no_python_shebang=yes
+#_no_python_shebang=yes
 
 # compile python code in sage venv
 pycompile_dirs="$_SAGE_ROOT/venv/"

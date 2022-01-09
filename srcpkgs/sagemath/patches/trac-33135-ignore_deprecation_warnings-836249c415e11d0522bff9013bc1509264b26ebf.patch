@@ -1,0 +1,27 @@
+From 836249c415e11d0522bff9013bc1509264b26ebf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Gonzalo=20Tornar=C3=ADa?= <tornaria@cmat.edu.uy>
+Date: Sun, 9 Jan 2022 16:51:22 -0300
+Subject: trac 33135: add filter to ignore deprecation warnings
+
+---
+ src/sage/all.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/sage/all.py b/src/sage/all.py
+index 01ef327..19ca3d4 100644
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -96,6 +96,10 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
+ warnings.filterwarnings('ignore', category=DeprecationWarning,
+                         module='pythran')
+ 
++warnings.filterwarnings('ignore', category=DeprecationWarning,
++                        message='The distutils(.sysconfig module| package) is deprecated',
++                        module='numpy|sage.env|sage.features')
++
+ ################ end setup warnings ###############################
+ 
+ 
+-- 
+cgit v1.0-1-gd88e
+
