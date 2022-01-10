@@ -66,7 +66,6 @@ ${PYPI_SITE}/s/sphinxcontrib-websupport/sphinxcontrib-websupport-1.2.1.tar.gz
 ${PYPI_SITE}/v/vcversioner/vcversioner-2.16.0.0.tar.gz
 
 https://github.com/fplll/fpylll/releases/download/0.5.6/fpylll-0.5.6.tar.gz
-https://github.com/gap-system/gap/releases/download/v4.11.1/gap-4.11.1.tar.gz
 http://users.ox.ac.uk/~coml0531/sage/graphs-20210214.tar.bz2
 https://github.com/sagemath/sagetex/releases/download/v3.5/sagetex-3.5.tar.gz
 https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.gz>threejs-sage-r122.tar.gz
@@ -103,7 +102,6 @@ ce063f3286e717b3914728ad23ec7db0a0f117ba3ade5ada8a250700779f6e77
 dae60c17a479781f44a4010701833f1829140b1eeccd258762a74974aa06e19b
 
 c69bf4b3344f60ca40743af9b9246ce51f651c2cf54d2b88a4deff18b1b5f246
-6635c5da7d82755f8339486b9cac33766f58712f297e8234fba40818902ea304
 07237c0d9853611505c389fd7bb92500c8743f5631babb4d0f45dfd8332f3741
 3a7454002ddff9bf862d139130c27de0416bbc2378e1f4de4eb50d805ee96779
 718767ab55876a3e957d1cfe89a322c6d9fa680fc737b9ca668aee6a3eac3bb8
@@ -157,6 +155,13 @@ pre_configure() {
 	fi
 
 	export MAKE="make -j ${XBPS_MAKEJOBS}"
+}
+
+post_configure() {
+	# we set some variables, right after configure has created sage_conf.py
+	cat <<-EOF >> pkgs/sage-conf/sage_conf.py
+	GAP_ROOT_DIR = "/usr/share/gap"
+	EOF
 }
 
 # DISABLED pytest since it brings more harm than good
@@ -248,7 +253,11 @@ makedepends+="
  gengetopt texinfo
  brial-devel cliquer-devel gfan libbraiding-devel libhomfly-devel
  lrcalc-devel nauty-devel palp tachyon
- maxima-ecl primesieve-devel primecount-devel
+ maxima-ecl primesieve-devel primecount-devel gap-devel
+"
+
+# optional dependencies
+makedepends+="
  ffmpeg ImageMagick
 "
 

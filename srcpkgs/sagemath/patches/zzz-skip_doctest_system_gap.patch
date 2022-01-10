@@ -1,0 +1,13 @@
+diff --git a/src/sage_setup/optional_extension.py b/src/sage_setup/optional_extension.py
+index f252849384..4034e3e196 100644
+--- a/src/sage_setup/optional_extension.py
++++ b/src/sage_setup/optional_extension.py
+@@ -80,7 +80,7 @@ def OptionalExtension(*args, **kwds):
+         sage: print(ext.__class__.__name__)
+         CythonizeExtension
+         sage: ext = OptionalExtension("foo", ["foo.c"], package="gap")
+-        sage: print(ext.__class__.__name__)
++        sage: print(ext.__class__.__name__)     # not tested - fails with system gap
+         Extension
+     """
+     try:
