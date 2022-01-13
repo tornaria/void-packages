@@ -161,6 +161,7 @@ post_configure() {
 	# we set some variables, right after configure has created sage_conf.py
 	cat <<-EOF >> pkgs/sage-conf/sage_conf.py
 	GAP_ROOT_DIR = "/usr/share/gap"
+	GAP_SO = "$(objdump -p /usr/lib/libgap.so | awk '/SONAME/{print $2}')"
 	EOF
 }
 
