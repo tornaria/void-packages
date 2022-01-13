@@ -1,0 +1,11 @@
+--- a/src/sage/tests/cmdline.py
++++ b/src/sage/tests/cmdline.py
+@@ -488,7 +488,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
+         0
+ 
+         sage: (out, err, ret) = test_executable(["sage", "--cython"])
+-        sage: print(err)
++        sage: print(err)  # not tested - broken when shebang is rewritten
+         Cython (http://cython.org) is a compiler for code written in the
+         Cython language.  Cython is based on Pyrex by Greg Ewing.
+         ...
