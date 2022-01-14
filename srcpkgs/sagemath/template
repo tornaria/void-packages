@@ -181,7 +181,8 @@ do_install() {
 	vmkdir usr/bin
 	# for now use sage-${version}_${revision} so it doesn't override
 	# other sage installed in the system
-	ln -sfT $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/sage-${version}_${revision}
+	ln -sfT $_SAGE_ROOT/sage ${DESTDIR}/usr/bin/sage-${version}
+	ln -sfT sage-${version} ${DESTDIR}/usr/bin/sage
 }
 
 do_check() {
