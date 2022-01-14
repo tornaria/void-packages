@@ -4,7 +4,8 @@ version=9.5.rc0
 revision=1
 wrksrc=sage-$version
 build_style=configure
-configure_args="--enable-build-as-root"
+configure_args="--enable-build-as-root --with-system-python3
+ --enable-system-site-packages"
 make_check_target=ptest
 # for now skip building docs
 make_build_target=build
@@ -22,13 +23,8 @@ distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
 checksum=8012e3ac35290fa9b2cb837eeca149925784c2378b486731226944e4afd8a4e6
 python_version=3
 
-build_options="debug system_python3 system_site_packages"
+build_options="debug"
 desc_option_debug="Build with debug symbols"
-desc_option_system_python="Build using system python 3"
-desc_option_system_python="Build using system python site-packages"
-build_options_default="system_python3 system_site_packages"
-configure_args+=" $(vopt_with system_python3)"
-configure_args+=" $(vopt_enable system_site_packages)"
 
 # path where sage will be installed
 _SAGE_ROOT=/usr/lib/sage-${version}
@@ -112,9 +108,6 @@ for u in ${_upstream}; do
 	skip_extraction+=" ${u##*[/>]}"
 done
 
-# for now, skip check in ci, since we still have a few tests failing
-#make_check=ci-skip
-
 # for now, just build native; we'll worry about cross later
 # besides, some dependencies are nocross (e.g. ntl)
 nocross=yes
@@ -164,16 +157,6 @@ post_configure() {
 	GAP_SO = "$(objdump -p /usr/lib/libgap.so | awk '/SONAME/{print $2}')"
 	EOF
 }
-
-# DISABLED pytest since it brings more harm than good
-# it seems currently all it does is to look for files matching
-# *_test.py and run pytest on those, but I don't think these are meant
-# to be run on pytest (and one even gives a failure...)
-#
-# post_build() {
-# 	# install pytest for more tests
-# 	./sage -i pytest
-# }
 
 do_install() {
 	vlicense COPYING.txt
@@ -301,7 +284,6 @@ _sage_python3_modules="
  python3-wheel python3-zipp pythran
  "
 
-if [ "$build_option_system_site_packages" ]; then
-	makedepends+=" $_sage_python3_modules"
-	depends+=" $_sage_python3_modules"
-fi
+# python packages are build and runtime dependencies
+makedepends+=" $_sage_python3_modules"
+depends+=" $_sage_python3_modules"

@@ -1,0 +1,12 @@
+--- a/src/sage_setup/find.py
++++ b/src/sage_setup/find.py
+@@ -301,7 +301,7 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
+         sage: extras["sage/libs/mpfr"]
+         [...sage/libs/mpfr/types.pxd...]
+         sage: extras["sage/ext/interpreters"]
+-        ['.../src/sage/ext/interpreters/wrapper_cdf.pxd', ...wrapper_cdf.h...]
++        ['.../src/sage/ext/interpreters/wrapper_cdf.pxd', ...]
+     """
+     from Cython.Utils import is_package_dir
+ 
+--
