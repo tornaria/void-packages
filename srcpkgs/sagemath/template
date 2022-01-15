@@ -59,12 +59,10 @@ checksum+="
 _upstream+="
  ${PYPI_SITE}/a/appnope/appnope-0.1.2.tar.gz
  ${PYPI_SITE}/c/cppy/cppy-1.1.0.tar.gz
- ${PYPI_SITE}/c/cvxopt/cvxopt-1.2.7.tar.gz
  ${PYPI_SITE}/c/cypari2/cypari2-2.1.2.tar.gz
  ${PYPI_SITE}/c/cysignals/cysignals-1.11.2.tar.gz
  ${PYPI_SITE}/C/Cython/Cython-0.29.24.tar.gz
  ${PYPI_SITE}/f/fonttools/fonttools-4.28.4.zip
- ${PYPI_SITE}/i/importlib_resources/importlib_resources-5.2.2.tar.gz
  ${PYPI_SITE}/j/jupyter_jsmol/jupyter_jsmol-0.2.4.tar.gz
  ${PYPI_SITE}/m/memory_allocator/memory_allocator-0.1.1.tar.gz
  ${PYPI_SITE}/p/pplpy/pplpy-0.8.6.tar.gz
@@ -79,12 +77,10 @@ _upstream+="
 checksum+="
  dd83cd4b5b460958838f6eb3000c660b1f9caf2a5b1de4264e941512f603258a
  4eda6f1952054a270f32dc11df7c5e24b259a09fddf7bfaa5f33df9fb4a29642
- 3f9db1f4d4e820aaea81d6fc21054c89dc6327c84f935dd5a1eda1af11e1d504
  03cd45edab8716ebbfdb754e65fea72e873c73dc91aec098fe4a01e35324ac7a
  5858b1760fbe21848121b826b2463a67ac5a45caf3d73105497a68618c5a6fa6
  cdf04d07c3600860e8c2ebaad4e8f52ac3feb212453c1764a49ac08c827e8443
  581a682a7102a41421e7e484303572c565c1b8e52b1cc9fecd3c159dbe9a02f4
- a65882a4d0fe5fbf702273456ba2ce74fe44892c25e42e057aca526b702a6d4b
  d2ce38e95773345d0eceffed5ecb0e5d49fe61da5e922dea754c85799cc512b3
  5641bea96b9e59a173639c118c2745fe16014c60012117ddf29c18abbb713408
  471b576a4c285758d27cc4a6f1b41afa29bfb9f3754a37f0520b35b6958eb8ce
@@ -257,9 +253,6 @@ makedepends+="
 # TODO: optional
 # 4ti2 coxeter3 libsemigroups lrslib pdf2svg perl_mongodb polymake
 
-# TODO: standard
-# cvxopt importlib_resources
-
 # python packages for trac-29665
 _sage_python3_modules="
  python3-Babel python3-Jinja2 python3-MarkupSafe python3-Pillow
@@ -291,6 +284,8 @@ _sage_python3_modules="
  python3-tornado python3-traitlets python3-typing_extensions
  python3-tzlocal python3-urllib3 python3-wcwidth python3-webencodings
  python3-wheel python3-zipp pythran
+
+ python3-cvxopt python3-importlib_resources
  "
 
 # python packages are build and runtime dependencies
