@@ -28,5 +28,5 @@ do_check() {
 	else
 		_test_args="--warn-long 5.0 $_test_args"
 	fi
-	/usr/bin/sage* -tp ${XBPS_MAKEJOBS} ${_test_args}
+	sage -tp ${XBPS_MAKEJOBS} ${_test_args}
 }
