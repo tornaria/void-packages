@@ -22,6 +22,7 @@ homepage="http://sagemath.org/"
 distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
 checksum=b015c54f7411669ef70bac2b2fde260e7f45724bcff170957b1f9fd08131f2c3
 python_version=3
+patch_args="-F0 -Np1"
 
 build_options="debug"
 desc_option_debug="Build with debug symbols"
