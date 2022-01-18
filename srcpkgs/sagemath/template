@@ -41,6 +41,7 @@ _spkg_system="
  pplpy
  fpylll
  memory_allocator
+ primecountpy
 "
 # databases to be used from system
 _databases="
@@ -68,13 +69,6 @@ _upstream="https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.g
 checksum+=" 718767ab55876a3e957d1cfe89a322c6d9fa680fc737b9ca668aee6a3eac3bb8"
 _need_to_pass_doctests="
  threejs
-"
-
-# primecountpy (use from system?)
-_upstream+=" ${PYPI_SITE}/p/primecountpy/primecountpy-0.1.0.tar.gz"
-checksum+=" 78fe7cc32115f0669a45d7c90faaf39f7ce3939e39e2e7e5f14c17fe4bff0676"
-_need_to_build="
- primecountpy
 "
 
 ### these might be necessary to run the notebook... for now skip as doctest pass

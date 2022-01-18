@@ -1,0 +1,13 @@
+diff --git a/build/make/Makefile.in b/build/make/Makefile.in
+index 0baddba4ae..be363bea71 100644
+--- a/build/make/Makefile.in
++++ b/build/make/Makefile.in
+@@ -624,7 +624,7 @@ $(1)-$(4)-no-deps:
+ 		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
+ 		SAGE_INST_LOCAL=$$($(4)) \
+ 		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
+-	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
++	    mkdir -p "$$($(4))/$(SPKG_INST_RELDIR)" && touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
+ 	else \
+ 	    echo; \
+ 	    echo "Error: $(1) is a dummy script package that the Sage distribution uses"; \

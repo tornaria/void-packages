@@ -1,0 +1,12 @@
+--- a/src/sage/misc/dist.py
++++ b/src/sage/misc/dist.py
+@@ -108,7 +108,8 @@ def install_scripts(directory=None, ignore_existing=False):
+     PATH = os.environ['PATH'].split(os.pathsep)
+     PATH = [d for d in PATH if os.path.exists(d)]
+     dir_in_path = any(os.path.samefile(directory, d) for d in PATH)
+-    PATH = os.pathsep.join(d for d in PATH
++    if os.path.exists(SAGE_BIN):
++        PATH = os.pathsep.join(d for d in PATH
+                            if not os.path.samefile(d, SAGE_BIN))
+     for cmd in ['gap', 'gp', 'hg', 'ipython', 'maxima',
+                 'mwrank', 'R', 'singular', 'sqlite3', 'M2', 'kash']:
