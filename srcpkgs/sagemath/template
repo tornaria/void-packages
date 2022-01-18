@@ -32,64 +32,26 @@ _SAGE_ROOT=/usr/lib/sage-${version}
 
 _SAGE_UPSTREAM_MIRROR=https://mirrors.mit.edu/sage/spkg/upstream
 
-# packages were sage is the upstream
-_upstream="
- ${_SAGE_UPSTREAM_MIRROR}/combinatorial_designs/combinatorial_designs-20140630.tar.bz2
- ${_SAGE_UPSTREAM_MIRROR}/conway_polynomials/conway_polynomials-0.5.tar.bz2
- ${_SAGE_UPSTREAM_MIRROR}/elliptic_curves/elliptic_curves-0.8.1.tar.bz2
- ${_SAGE_UPSTREAM_MIRROR}/jmol/jmol-14.29.52.tar.bz2
- ${_SAGE_UPSTREAM_MIRROR}/mathjax/mathjax-2.7.4.tar.gz
- ${_SAGE_UPSTREAM_MIRROR}/polytopes_db/polytopes_db-20170220.tar.bz2
- ${_SAGE_UPSTREAM_MIRROR}/ratpoints/ratpoints-2.1.3.tar.bz2
- ${_SAGE_UPSTREAM_MIRROR}/sagenb_export/sagenb_export-3.3.tar.gz
- ${_SAGE_UPSTREAM_MIRROR}/thebe/thebe-9624e0a0.zip
+# these packages can be used from system
+_spkg_system="
+ cppy
+ cython
+ cysignals
+ cypari
+ pplpy
+ fpylll
+ memory_allocator
 "
-checksum+="
- c9486c6d7ec71da338589a6e301723be4e55e02dcfc41f8dba11a682e3b3482e
- d8f2788a85b1c2482cc4abe1a35d3da777445e21ec49b031d36b899e3c0deb17
- 5fba5470d9d91f06282ed5edfc45bf0ea1c5f7c8d4837c46234b17be1481fd50
- ebf9cd42cd8e3839cf94ec11691b98a9b00917f3485a821291b76d7ecd6ffe9d
- 169996cc6449c8d615043b07e1f20e9e3cd821de2325b5a250ef42142ea654b3
- cb788bdfca6e00864ec0bfa67932a68ae68bfeb9c527a91be90ad218026a0ce0
- edd3238422f47661b8a556f0241f36d619584d2f055efa1f96c749d1403abe1e
- b642321ccd94da4d04afa12f33b6cea7c8db289f3283c6e39b3a50131780bb5a
- cc1e407cbe0804f9644c207fecc074ed0fa389ba65f49da58e63fffe9bfe6923
+# databases to be used from system
+_databases="
+ combinatorial_designs
+ conway_polynomials
+ elliptic_curves
+ graphs
+ polytopes_db
 "
-
-# packages from pypi (python modules)
-_upstream+="
-
- ${PYPI_SITE}/j/jupyter_jsmol/jupyter_jsmol-0.2.4.tar.gz
- ${PYPI_SITE}/m/memory_allocator/memory_allocator-0.1.1.tar.gz
- ${PYPI_SITE}/p/primecountpy/primecountpy-0.1.0.tar.gz
-
- ${PYPI_SITE}/r/rpy2/rpy2-3.3.6.tar.gz
- ${PYPI_SITE}/v/vcversioner/vcversioner-2.16.0.0.tar.gz
-"
-checksum+="
-
- d2ce38e95773345d0eceffed5ecb0e5d49fe61da5e922dea754c85799cc512b3
- 5641bea96b9e59a173639c118c2745fe16014c60012117ddf29c18abbb713408
- 78fe7cc32115f0669a45d7c90faaf39f7ce3939e39e2e7e5f14c17fe4bff0676
-
- ce063f3286e717b3914728ad23ec7db0a0f117ba3ade5ada8a250700779f6e77
- dae60c17a479781f44a4010701833f1829140b1eeccd258762a74974aa06e19b
-"
-
-# other upstream packages
-_upstream+="
- http://users.ox.ac.uk/~coml0531/sage/graphs-20210214.tar.bz2
- https://github.com/sagemath/sagetex/releases/download/v3.5/sagetex-3.5.tar.gz
- https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.gz>threejs-sage-r122.tar.gz
-"
-checksum+="
- 07237c0d9853611505c389fd7bb92500c8743f5631babb4d0f45dfd8332f3741
- 3a7454002ddff9bf862d139130c27de0416bbc2378e1f4de4eb50d805ee96779
- 718767ab55876a3e957d1cfe89a322c6d9fa680fc737b9ca668aee6a3eac3bb8
-"
-
-# these packages are not needed, don't install
-_dontinstall="
+### these packages are not needed, skip
+_spkg_skip="
  appnope
  fonttools
  importlib_resources
@@ -98,17 +60,59 @@ _dontinstall="
  setuptools_wheel
  sphinxcontrib_websupport
  pplpy_doc
+ vcversioner
 "
 
-# these packages can be used from system
-_usefromsystem="
- cppy
- cython
- cysignals
- cypari
- pplpy
- fpylll
+_upstream=""
+
+# threejs
+_upstream+=" https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.gz>threejs-sage-r122.tar.gz"
+checksum+=" 718767ab55876a3e957d1cfe89a322c6d9fa680fc737b9ca668aee6a3eac3bb8"
+_need_to_pass_doctests="
+ threejs
 "
+
+# primecountpy (use from system?)
+_upstream+=" ${PYPI_SITE}/p/primecountpy/primecountpy-0.1.0.tar.gz"
+checksum+=" 78fe7cc32115f0669a45d7c90faaf39f7ce3939e39e2e7e5f14c17fe4bff0676"
+_need_to_build="
+ primecountpy
+"
+
+### these might be necessary to run the notebook... for now skip as doctest pass
+_spkg_skip+="
+ jmol
+ mathjax
+ sagenb_export
+ thebe
+ sagetex
+ jupyter_jsmol
+ rpy2
+"
+#_upstream+="
+# ${_SAGE_UPSTREAM_MIRROR}/jmol/jmol-14.29.52.tar.bz2
+# ${_SAGE_UPSTREAM_MIRROR}/mathjax/mathjax-2.7.4.tar.gz
+# ${_SAGE_UPSTREAM_MIRROR}/sagenb_export/sagenb_export-3.3.tar.gz
+# ${_SAGE_UPSTREAM_MIRROR}/thebe/thebe-9624e0a0.zip
+# https://github.com/sagemath/sagetex/releases/download/v3.5/sagetex-3.5.tar.gz
+# ${PYPI_SITE}/j/jupyter_jsmol/jupyter_jsmol-0.2.4.tar.gz
+# ${PYPI_SITE}/r/rpy2/rpy2-3.3.6.tar.gz
+#"
+#checksum+="
+# ebf9cd42cd8e3839cf94ec11691b98a9b00917f3485a821291b76d7ecd6ffe9d
+# 169996cc6449c8d615043b07e1f20e9e3cd821de2325b5a250ef42142ea654b3
+# b642321ccd94da4d04afa12f33b6cea7c8db289f3283c6e39b3a50131780bb5a
+# cc1e407cbe0804f9644c207fecc074ed0fa389ba65f49da58e63fffe9bfe6923
+# 3a7454002ddff9bf862d139130c27de0416bbc2378e1f4de4eb50d805ee96779
+# d2ce38e95773345d0eceffed5ecb0e5d49fe61da5e922dea754c85799cc512b3
+# ce063f3286e717b3914728ad23ec7db0a0f117ba3ade5ada8a250700779f6e77
+#"
+
+for db in $_databases; do
+	_spkg_system+=" $db"
+	depends+=" sage-data-$db"
+	checkdepends+=" sage-data-$db"
+done
 
 for u in ${_upstream}; do
 	distfiles+=" $u"
@@ -152,12 +156,12 @@ post_patch() {
 }
 
 pre_configure() {
-	for spkg in $_dontinstall; do
+	for spkg in $_spkg_skip; do
 		configure_args+=" sage_spkg_install_$spkg=no"
 		configure_args+=" sage_require_$spkg=no"
 	done
 
-	for spkg in $_usefromsystem; do
+	for spkg in $_spkg_system; do
 		configure_args+=" sage_spkg_install_$spkg=no"
 		configure_args+=" sage_require_$spkg=yes"
 	done
@@ -174,6 +178,13 @@ post_configure() {
 	cat <<-EOF >> pkgs/sage-conf/sage_conf.py
 	GAP_ROOT_DIR = "/usr/share/gap"
 	GAP_SO = "$(objdump -p /usr/lib/libgap.so | awk '/SONAME/{print $2}')"
+	CONWAY_POLYNOMIALS_DATA_DIR = "/usr/share/sagemath/conway_polynomials"
+	GRAPHS_DATA_DIR = "/usr/share/sagemath/graphs"
+	ELLCURVE_DATA_DIR = "/usr/share/sagemath/ellcurves"
+	POLYTOPE_DATA_DIR = "/usr/share/sagemath/reflexive_polytopes"
+	COMBINATORIAL_DESIGN_DATA_DIR = "/usr/share/sagemath/combinatorial_designs"
+	CREMONA_MINI_DATA_DIR = "/usr/share/sagemath/cremona"
+	CREMONA_LARGE_DATA_DIR = "/usr/share/sagemath/cremona"
 	EOF
 }
 
@@ -213,9 +224,9 @@ do_check() {
 	cp ${FILESDIR}/timings2.json .
 	_test_args="--stats_path=timings2.json"
 	if [ "$XBPS_CHECK_PKGS" = full ]; then
-		_test_args+=" --long --warn-long 20.0"
+		_test_args+=" --long --warn-long 60.0"
 	else
-		_test_args+=" --warn-long 10.0"
+		_test_args+=" --warn-long 30.0"
 	fi
 	if [ "$XBPS_BUILD_ENVIRONMENT" = void-packages-ci ]; then
 		# for CI use a predictable random seed
@@ -308,7 +319,10 @@ _sage_python3_modules="
  python3-cypari2
  python3-pplpy
  python3-fpylll
- "
+
+ python3-primecountpy
+ python3-memory_allocator
+"
 
 # python packages are build and runtime dependencies
 makedepends+=" $_sage_python3_modules"
