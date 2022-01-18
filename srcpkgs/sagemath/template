@@ -30,85 +30,35 @@ desc_option_debug="Build with debug symbols"
 # path where sage will be installed
 _SAGE_ROOT=/usr/lib/sage-${version}
 
-_SAGE_UPSTREAM_MIRROR=https://mirrors.mit.edu/sage/spkg/upstream
+# Skip these sage packages: they are not needed
+_spkg_skip="appnope fonttools importlib_resources pycygwin
+ setuptools_scm_git_archive setuptools_wheel sphinxcontrib_websupport
+ pplpy_doc vcversioner
+ jmol mathjax sagenb_export thebe sagetex jupyter_jsmol rpy2 threejs"
 
-# these packages can be used from system
-_spkg_system="
- cppy
- cython
- cysignals
- cypari
- pplpy
- fpylll
- memory_allocator
- primecountpy
-"
-# databases to be used from system
-_databases="
- combinatorial_designs
- conway_polynomials
- elliptic_curves
- graphs
- polytopes_db
-"
-### these packages are not needed, skip
-_spkg_skip="
- appnope
- fonttools
- importlib_resources
- pycygwin
- setuptools_scm_git_archive
- setuptools_wheel
- sphinxcontrib_websupport
- pplpy_doc
- vcversioner
-"
+# Force use these sage packages from system
+_spkg_system="cppy cython cysignals cypari pplpy fpylll memory_allocator
+ primecountpy"
 
-# threejs
-_upstream="https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.gz>threejs-sage-r122.tar.gz"
-checksum+=" 718767ab55876a3e957d1cfe89a322c6d9fa680fc737b9ca668aee6a3eac3bb8"
-_need_to_pass_doctests="
- threejs
-"
+# Databases to be used from system
+_spkg_db="combinatorial_designs conway_polynomials elliptic_curves graphs
+ polytopes_db"
 
-### these might be necessary to run the notebook... for now skip as doctest pass
-_spkg_skip+="
- jmol
- mathjax
- sagenb_export
- thebe
- sagetex
- jupyter_jsmol
- rpy2
-"
-#_upstream+="
-# ${_SAGE_UPSTREAM_MIRROR}/jmol/jmol-14.29.52.tar.bz2
-# ${_SAGE_UPSTREAM_MIRROR}/mathjax/mathjax-2.7.4.tar.gz
-# ${_SAGE_UPSTREAM_MIRROR}/sagenb_export/sagenb_export-3.3.tar.gz
-# ${_SAGE_UPSTREAM_MIRROR}/thebe/thebe-9624e0a0.zip
-# https://github.com/sagemath/sagetex/releases/download/v3.5/sagetex-3.5.tar.gz
-# ${PYPI_SITE}/j/jupyter_jsmol/jupyter_jsmol-0.2.4.tar.gz
-# ${PYPI_SITE}/r/rpy2/rpy2-3.3.6.tar.gz
-#"
-#checksum+="
-# ebf9cd42cd8e3839cf94ec11691b98a9b00917f3485a821291b76d7ecd6ffe9d
-# 169996cc6449c8d615043b07e1f20e9e3cd821de2325b5a250ef42142ea654b3
-# b642321ccd94da4d04afa12f33b6cea7c8db289f3283c6e39b3a50131780bb5a
-# cc1e407cbe0804f9644c207fecc074ed0fa389ba65f49da58e63fffe9bfe6923
-# 3a7454002ddff9bf862d139130c27de0416bbc2378e1f4de4eb50d805ee96779
-# d2ce38e95773345d0eceffed5ecb0e5d49fe61da5e922dea754c85799cc512b3
-# ce063f3286e717b3914728ad23ec7db0a0f117ba3ade5ada8a250700779f6e77
-#"
-
-for db in $_databases; do
-	_spkg_system+=" $db"
-	depends+=" sage-data-$db"
-	checkdepends+=" sage-data-$db"
+for spkg in $_spkg_skip; do
+	configure_args+=" sage_spkg_install_$spkg=no"
+	configure_args+=" sage_require_$spkg=no"
 done
 
-for u in ${_upstream}; do
-	distfiles+=" $u"
-	skip_extraction+=" ${u##*[/>]}"
+for spkg in $_spkg_system; do
+	configure_args+=" sage_spkg_install_$spkg=no"
+	configure_args+=" sage_require_$spkg=yes"
+done
+
+for spkg in $_spkg_db; do
+	configure_args+=" sage_spkg_install_$spkg=no"
+	configure_args+=" sage_require_$spkg=yes"
+	depends+=" sage-data-$spkg"
+	checkdepends+=" sage-data-$spkg"
 done
 
 # for now, just build native; we'll worry about cross later
@@ -120,9 +70,6 @@ nostrip=yes
 
 # don't shlib_provide anything
 noshlibprovides=yes
-
-# don't rewrite python shebang as sage uses its own python (for now)
-#_no_python_shebang=yes
 
 # compile python code in sage venv
 pycompile_dirs="$_SAGE_ROOT/venv/"
@@ -148,16 +95,6 @@ post_patch() {
 }
 
 pre_configure() {
-	for spkg in $_spkg_skip; do
-		configure_args+=" sage_spkg_install_$spkg=no"
-		configure_args+=" sage_require_$spkg=no"
-	done
-
-	for spkg in $_spkg_system; do
-		configure_args+=" sage_spkg_install_$spkg=no"
-		configure_args+=" sage_require_$spkg=yes"
-	done
-
 	if [ "$build_option_debug" ]; then
 		export SAGE_DEBUG=yes
 	fi
@@ -232,7 +169,7 @@ do_check() {
 ### copied from sage-deps, to be kept in sync
 
 # hard dependencies
-makedepends+=" gcc make m4 perl binutils git tar libgomp-devel"
+makedepends="gcc make m4 perl binutils git tar libgomp-devel"
 
 # recommended dependencies
 makedepends+=" gcc-fortran openssl-devel"
@@ -305,16 +242,8 @@ _sage_python3_modules="
  python3-tzlocal python3-urllib3 python3-wcwidth python3-webencodings
  python3-wheel python3-zipp pythran
 
- python3-cvxopt
- python3-cppy
- python3-Cython
- python3-cysignals
- python3-cypari2
- python3-pplpy
- python3-fpylll
-
- python3-primecountpy
- python3-memory_allocator
+ python3-cvxopt python3-cppy python3-Cython python3-cysignals python3-cypari2
+ python3-pplpy python3-fpylll python3-primecountpy python3-memory_allocator
 "
 
 # python packages are build and runtime dependencies
