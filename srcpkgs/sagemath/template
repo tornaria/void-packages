@@ -63,10 +63,8 @@ _spkg_skip="
  vcversioner
 "
 
-_upstream=""
-
 # threejs
-_upstream+=" https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.gz>threejs-sage-r122.tar.gz"
+_upstream="https://github.com/sagemath/threejs-sage/archive/refs/tags/r122.tar.gz>threejs-sage-r122.tar.gz"
 checksum+=" 718767ab55876a3e957d1cfe89a322c6d9fa680fc737b9ca668aee6a3eac3bb8"
 _need_to_pass_doctests="
  threejs
@@ -198,7 +196,7 @@ do_install() {
 		vcopy local/$f $_SAGE_ROOT/local
 	done
 	vmkdir $_SAGE_ROOT/$(readlink venv)
-	for f in pyvenv.cfg bin etc lib share; do
+	for f in pyvenv.cfg bin lib share; do
 		vcopy venv/$f $_SAGE_ROOT/venv/
 	done
 	vcopy "src" $_SAGE_ROOT # only src/sage ?
