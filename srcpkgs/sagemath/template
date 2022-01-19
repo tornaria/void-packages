@@ -33,7 +33,7 @@ _SAGE_ROOT=/usr/lib/sage-${version}
 # Skip these sage packages: they are not needed
 _spkg_skip="appnope fonttools importlib_resources pycygwin
  setuptools_scm_git_archive setuptools_wheel sphinxcontrib_websupport
- pplpy_doc vcversioner
+ pplpy_doc vcversioner ratpoints
  jmol mathjax sagenb_export thebe sagetex jupyter_jsmol rpy2 threejs"
 
 # Force use these sage packages from system
@@ -107,6 +107,8 @@ do_clean() {
 }
 
 post_patch() {
+	# these are unused and nothing else uses ratpoints spkg
+	rm src/sage/libs/ratpoints.{pyx,pxd}
 	./bootstrap
 }
 
