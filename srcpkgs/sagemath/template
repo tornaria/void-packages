@@ -1,6 +1,6 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=9.5.rc2
+version=9.5.rc3
 revision=1
 wrksrc=sage-$version
 build_style=configure
@@ -20,7 +20,7 @@ maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-3.0-only, GPL-2.0-or-later, CC-BY-SA-3.0, custom:Various free"
 homepage="http://sagemath.org/"
 distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
-checksum=c7eba867c11ab1b6d04535dd8df54640d3de0625ad96cdac17b17af977d96dce
+checksum=dabc1a98e883c6069b59a755852bb0030395404a95d19d497c56f557c02619c2
 python_version=3
 patch_args="-F0 -Np1"
 
