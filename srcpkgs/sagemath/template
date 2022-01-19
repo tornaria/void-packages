@@ -38,7 +38,8 @@ _spkg_skip="appnope fonttools importlib_resources pycygwin
 
 # Force use these sage packages from system
 _spkg_system="cppy cython cysignals cypari pplpy fpylll memory_allocator
- primecountpy"
+ primecountpy
+ linbox gap maxima"
 
 # Databases to be used from system
 _spkg_db="combinatorial_designs conway_polynomials elliptic_curves graphs
@@ -107,6 +108,8 @@ post_configure() {
 	cat <<-EOF >> pkgs/sage-conf/sage_conf.py
 	GAP_ROOT_DIR = "/usr/share/gap"
 	GAP_SO = "$(objdump -p /usr/lib/libgap.so | awk '/SONAME/{print $2}')"
+	MAXIMA = "maxima -l ecl"
+	MAXIMA_FAS = ""
 	CONWAY_POLYNOMIALS_DATA_DIR = "/usr/share/sagemath/conway_polynomials"
 	GRAPHS_DATA_DIR = "/usr/share/sagemath/graphs"
 	ELLCURVE_DATA_DIR = "/usr/share/sagemath/ellcurves"
@@ -114,6 +117,9 @@ post_configure() {
 	COMBINATORIAL_DESIGN_DATA_DIR = "/usr/share/sagemath/combinatorial_designs"
 	CREMONA_MINI_DATA_DIR = "/usr/share/sagemath/cremona"
 	CREMONA_LARGE_DATA_DIR = "/usr/share/sagemath/cremona"
+	EOF
+	cat <<-EOF >> src/bin/sage-env
+	unset MAXIMA_PREFIX
 	EOF
 }
 
