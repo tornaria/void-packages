@@ -1,0 +1,53 @@
+From 05fcaabe95082f42ba134780d579390d7b6153e2 Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Sat, 9 Oct 2021 19:30:58 -0400
+Subject: Trac #29665: add --enable-system-site-packages option to ./configure.
+
+This new option is experimental and disabled by default. When it is
+enabled, the string "--system-site-packages" is appended to a new
+environment variable SAGE_VENV_FLAGS that is then passed to the
+sage-venv command during the build using autoconf substitution.
+Thusly the correct setting finds its way into local/pyvenv.cfg.
+---
+ build/make/Makefile.in |  2 +-
+ configure.ac           | 11 +++++++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/build/make/Makefile.in b/build/make/Makefile.in
+index f870cc3..68627ab 100644
+--- a/build/make/Makefile.in
++++ b/build/make/Makefile.in
+@@ -211,7 +211,7 @@ endif
+ inst_python3_venv = $(SAGE_VENV)/pyvenv.cfg
+ 
+ $(inst_python3_venv):
+-	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv "$(SAGE_VENV)"
++	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv @SAGE_VENV_FLAGS@ "$(SAGE_VENV)"
+ endif
+ 
+ # Build everything and start Sage.
+diff --git a/configure.ac b/configure.ac
+index 351f487..db30a91 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -435,6 +435,17 @@ AC_ARG_ENABLE([download-from-upstream-url],
+   [AS_HELP_STRING([--enable-download-from-upstream-url],
+     [allow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])])
+ 
++AC_ARG_ENABLE(
++  [system-site-packages], [AS_HELP_STRING(
++    [--enable-system-site-packages],
++    [allow sage to use python packages from the system (experimental; default: no)]
++  )], [
++  AS_IF([test "x$enable_system_site_packages" = "xyes"], [
++    SAGE_VENV_FLAGS="${SAGE_VENV_FLAGS} --system-site-packages"
++  ])
++])
++AC_SUBST([SAGE_VENV_FLAGS])
++
+ SAGE_SPKG_OPTIONS=""
+ AS_IF([test "x$enable_experimental_packages" = "xyes"], [
+   AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -y"])
+-- 
+cgit v1.0-1-gd88e
+

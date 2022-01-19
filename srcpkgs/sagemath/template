@@ -39,6 +39,21 @@ _spkg_skip="appnope fonttools importlib_resources pycygwin
 # Force use these sage packages from system
 _spkg_system="cppy cython cysignals cypari pplpy fpylll memory_allocator
  primecountpy
+ alabaster argcomplete argon2_cffi attrs babel backcall beniget bleach certifi
+ cffi charset_normalizer cvxopt cycler dateutil debugpy decorator defusedxml
+ docutils entrypoints flit_core gast gmpy2 html5lib idna imagesize
+ importlib_metadata importlib_resources ipykernel ipython ipython_genutils
+ ipywidgets jedi jinja2 jsonschema jupyter_client jupyter_core
+ jupyterlab_pygments kiwisolver markupsafe matplotlib matplotlib_inline mistune
+ mpmath nbclient nbconvert nbformat nest_asyncio networkx notebook numpy
+ packaging pandocfilters parso pexpect pickleshare pillow pip pkgconfig pluggy
+ ply prometheus_client prompt_toolkit ptyprocess py pybind11 pycparser pygments
+ pyparsing pyrsistent pythran pytz pyzmq requests scipy send2trash setuptools
+ setuptools_scm simplegeneric six snowballstemmer sphinx
+ sphinxcontrib_applehelp sphinxcontrib_devhelp sphinxcontrib_htmlhelp
+ sphinxcontrib_jsmath sphinxcontrib_qthelp sphinxcontrib_serializinghtml sympy
+ terminado testpath texttable tomli tornado traitlets typing_extensions tzlocal
+ urllib3 wcwidth webencodings wheel widgetsnbextension zipp
  linbox gap maxima"
 
 # Databases to be used from system
