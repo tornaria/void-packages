@@ -5,10 +5,7 @@ revision=1
 wrksrc=sage-$version
 build_style=configure
 configure_args="--enable-build-as-root --with-system-python3
- --enable-system-site-packages"
-make_check_target=ptest
-# for now skip building docs
-make_build_target=build
+ --enable-system-site-packages --disable-doc"
 depends="giac git FlintQS zn_poly sympow
  pari-elldata-small pari-galdata pari-galpol-small pari-seadata-small
  flintlib-devel gsl-devel ntl-devel eclib-devel pari-devel mpfr-devel
@@ -23,9 +20,6 @@ distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
 checksum=dabc1a98e883c6069b59a755852bb0030395404a95d19d497c56f557c02619c2
 python_version=3
 patch_args="-F0 -Np1"
-
-build_options="debug"
-desc_option_debug="Build with debug symbols"
 
 # path where sage will be installed
 _SAGE_ROOT=/usr/lib/sage-${version}
@@ -95,11 +89,6 @@ post_extract() {
 	rm -rf $_SAGE_ROOT
 	mv -T $wrksrc $_SAGE_ROOT
 	ln -srfT $_SAGE_ROOT $wrksrc
-
-	mkdir -p $wrksrc/upstream
-	for u in ${_upstream}; do
-		cp "$XBPS_SRCDISTDIR/${pkgname}-${version}/${u##*[/>]}" $wrksrc/upstream
-	done
 }
 
 do_clean() {
@@ -110,14 +99,6 @@ post_patch() {
 	# these are unused and nothing else uses ratpoints spkg
 	rm src/sage/libs/ratpoints.{pyx,pxd}
 	./bootstrap
-}
-
-pre_configure() {
-	if [ "$build_option_debug" ]; then
-		export SAGE_DEBUG=yes
-	fi
-
-	export MAKE="make -j ${XBPS_MAKEJOBS}"
 }
 
 post_configure() {
