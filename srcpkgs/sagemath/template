@@ -33,9 +33,9 @@ _spkg_skip="appnope fonttools importlib_resources pycygwin
 # Force use these sage packages from system
 _spkg_system="cppy cython cysignals cypari pplpy fpylll memory_allocator
  primecountpy
- alabaster argcomplete argon2_cffi attrs babel backcall beniget bleach certifi
+ argcomplete argon2_cffi attrs backcall beniget bleach certifi
  cffi charset_normalizer cvxopt cycler dateutil debugpy decorator defusedxml
- docutils entrypoints flit_core gast gmpy2 html5lib idna imagesize
+ docutils entrypoints flit_core gast gmpy2 html5lib idna
  importlib_metadata importlib_resources ipykernel ipython ipython_genutils
  ipywidgets jedi jinja2 jsonschema jupyter_client jupyter_core
  jupyterlab_pygments kiwisolver markupsafe matplotlib matplotlib_inline mistune
@@ -43,12 +43,14 @@ _spkg_system="cppy cython cysignals cypari pplpy fpylll memory_allocator
  packaging pandocfilters parso pexpect pickleshare pillow pip pkgconfig pluggy
  ply prometheus_client prompt_toolkit ptyprocess py pybind11 pycparser pygments
  pyparsing pyrsistent pythran pytz pyzmq requests scipy send2trash setuptools
- setuptools_scm simplegeneric six snowballstemmer sphinx
- sphinxcontrib_applehelp sphinxcontrib_devhelp sphinxcontrib_htmlhelp
- sphinxcontrib_jsmath sphinxcontrib_qthelp sphinxcontrib_serializinghtml sympy
+ setuptools_scm simplegeneric six sympy
  terminado testpath texttable tomli tornado traitlets typing_extensions tzlocal
  urllib3 wcwidth webencodings wheel widgetsnbextension zipp
  linbox gap maxima"
+### Not required with --disable-doc
+#alabaster babel imagesize snowballstemmer sphinx
+#sphinxcontrib_applehelp sphinxcontrib_devhelp sphinxcontrib_htmlhelp
+#sphinxcontrib_jsmath sphinxcontrib_qthelp sphinxcontrib_serializinghtml
 
 # Databases to be used from system
 _spkg_db="combinatorial_designs conway_polynomials elliptic_curves graphs
@@ -216,13 +218,13 @@ makedepends+="
 
 # python packages for trac-29665
 _sage_python3_modules="
- python3-Babel python3-Jinja2 python3-MarkupSafe python3-Pillow
- python3-Pygments python3-Sphinx python3-alabaster python3-argcomplete
+ python3-Jinja2 python3-MarkupSafe python3-Pillow
+ python3-Pygments python3-argcomplete
  python3-argon2 python3-attrs python3-backcall python3-beniget
  python3-bleach python3-certifi python3-cffi python3-charset-normalizer
  python3-cycler python3-dateutil python3-decorator python3-defusedxml
  python3-docutils python3-entrypoints python3-flit_core python3-gast
- python3-gmpy2 python3-html5lib python3-idna python3-imagesize
+ python3-gmpy2 python3-html5lib python3-idna
  python3-importlib_metadata python3-ipython python3-ipython_genutils
  python3-ipython_ipykernel python3-jedi python3-jsonschema
  python3-jupyter_client python3-jupyter_core python3-jupyter_ipywidgets
@@ -237,10 +239,7 @@ _sage_python3_modules="
  python3-pycparser python3-pyrsistent python3-pytz python3-pyzmq
  python3-requests python3-scipy python3-send2trash python3-setuptools
  python3-setuptools_scm python3-simplegeneric python3-six
- python3-snowballstemmer python3-sphinxcontrib-applehelp
- python3-sphinxcontrib-devhelp python3-sphinxcontrib-htmlhelp
- python3-sphinxcontrib-jsmath python3-sphinxcontrib-qthelp
- python3-sphinxcontrib-serializinghtml python3-sympy python3-terminado
+ python3-sympy python3-terminado
  python3-testpath python3-texttable python3-toml python3-tomli
  python3-tornado python3-traitlets python3-typing_extensions
  python3-tzlocal python3-urllib3 python3-wcwidth python3-webencodings
