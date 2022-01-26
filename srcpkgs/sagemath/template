@@ -5,7 +5,7 @@ revision=1
 wrksrc=sage-$version
 build_style=configure
 configure_args="--enable-build-as-root --with-system-python3
- --enable-system-site-packages --disable-doc"
+ --enable-system-site-packages --disable-doc --with-sage-venv=no"
 depends="giac git FlintQS zn_poly sympow
  pari-elldata-small pari-galdata pari-galpol-small pari-seadata-small
  flintlib-devel gsl-devel ntl-devel eclib-devel pari-devel mpfr-devel
@@ -84,7 +84,7 @@ nostrip=yes
 noshlibprovides=yes
 
 # compile python code in sage venv
-pycompile_dirs="$_SAGE_ROOT/venv/"
+pycompile_dirs="$_SAGE_ROOT"
 
 post_extract() {
 	# sage wants to be built in place so let $wrksrc be a symlink
@@ -127,20 +127,15 @@ do_install() {
 	vlicense COPYING.txt
 	vdoc README.md
 	vmkdir $_SAGE_ROOT
-	vcopy "VERSION.txt prefix sage venv" $_SAGE_ROOT
+	vcopy "VERSION.txt sage" $_SAGE_ROOT
 	vmkdir $_SAGE_ROOT/local
-	for f in bin include lib share; do
+	for f in pyvenv.cfg bin lib share; do
 		vcopy local/$f $_SAGE_ROOT/local
 	done
-	vmkdir $_SAGE_ROOT/$(readlink venv)
-	for f in pyvenv.cfg bin lib share; do
-		vcopy venv/$f $_SAGE_ROOT/venv/
-	done
-	vcopy "src" $_SAGE_ROOT # only src/sage ?
-
-	# not needed ?
-	# Maybe pkgs/sagemath-standard/build/cythonized for debug
-	#vcopy "build pkgs" $_SAGE_ROOT
+	vmkdir $_SAGE_ROOT/src
+	vcopy src/bin $_SAGE_ROOT/src
+	ln -sf ../local/lib/python3.10/site-packages/{sage,sage_setup} \
+		${DESTDIR}/$_SAGE_ROOT/src
 
 	# symlink main binary
 	vmkdir usr/bin

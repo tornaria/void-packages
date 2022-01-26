@@ -1,0 +1,13 @@
+diff --git a/src/sage_setup/find.py b/src/sage_setup/find.py
+index 18f0ddf1ae..084256e3e7 100644
+--- a/src/sage_setup/find.py
++++ b/src/sage_setup/find.py
+@@ -213,7 +213,7 @@ def filter_cython_sources(src_dir, distributions):
+     """
+     files: list[str] = []
+ 
+-    for dirpath, dirnames, filenames in os.walk(src_dir):
++    for dirpath, dirnames, filenames in os.walk(src_dir, followlinks=True):
+         for filename in filenames:
+             filepath = os.path.join(dirpath, filename)
+             base, ext = os.path.splitext(filename)
