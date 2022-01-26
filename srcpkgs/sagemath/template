@@ -204,9 +204,9 @@ makedepends+="
 "
 
 # optional dependencies
-makedepends+="
- ffmpeg ImageMagick
-"
+#makedepends+="
+# ffmpeg ImageMagick
+#"
 
 # TODO: optional
 # 4ti2 coxeter3 libsemigroups lrslib pdf2svg perl_mongodb polymake
