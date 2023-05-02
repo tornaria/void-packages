@@ -1,20 +1,30 @@
 # Template file for 'python3-jupyter_core'
 pkgname=python3-jupyter_core
-version=5.0.0
-revision=2
+version=5.3.1
+revision=1
 build_style=python3-pep517
-hostmakedepends="python3-flit_core hatchling"
-depends="python3-traitlets python3-platformdirs"
+hostmakedepends="hatchling"
+depends="python3-platformdirs python3-traitlets"
+checkdepends="python3-pytest $depends"
 short_desc="Jupyter core package"
-maintainer="Orphaned <orphan@voidlinux.org>"
+maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="BSD-3-Clause"
 homepage="https://jupyter.org"
+changelog="https://github.com/jupyter/jupyter_core/raw/main/CHANGELOG.md"
 distfiles="${PYPI_SITE}/j/jupyter_core/jupyter_core-${version}.tar.gz"
-checksum=4ed68b7c606197c7e344a24b7195eef57898157075a69655a886074b6beb7043
-conflicts="python-jupyter_core<=4.4.0_3"
-# checks create a cycle with python3-jypter_client and python3-ipython_ipykernel
-make_check=no
+checksum=5ba5c7938a7f97a6b0481463f7ff0dbac7c15ba48cf46fa4035ca6e838aa1aba
+
+do_check() {
+	# Running via PYTHONPATH breaks... venv works
+	# This could be moved to build-style/python3-pep517.sh
+	local testdir="${wrksrc}/.xbps-testdir"
+	rm -rf "${testdir}"
+	python3 -m venv --system-site-packages --without-pip "${testdir}"
+	local -x PATH="${testdir}/bin:${PATH}"
+	python3 -m installer dist/*.whl
+	python3 -m pytest
+}
 
 post_install() {
-	vlicense COPYING.md LICENSE
+	vlicense LICENSE
 }
