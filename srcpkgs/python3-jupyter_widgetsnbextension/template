@@ -1,19 +1,17 @@
 # Template file for 'python3-jupyter_widgetsnbextension'
 pkgname=python3-jupyter_widgetsnbextension
-version=3.5.1
-revision=4
-build_style=python3-module
-hostmakedepends="python3-setuptools"
-depends="python3-jupyter_notebook"
-checkdepends="$depends"
+version=4.0.7
+revision=1
+build_style=python3-pep517
+hostmakedepends="python3-jupyter_packaging"
 short_desc="Interactive HTML widgets for Jupyter notebooks"
-maintainer="Orphaned <orphan@voidlinux.org>"
+maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="BSD-3-Clause"
 homepage="https://pypi.org/project/widgetsnbextension/"
 distfiles="${PYPI_SITE}/w/widgetsnbextension/widgetsnbextension-${version}.tar.gz"
-checksum=079f87d87270bce047512400efd70238820751a11d2d8cb137a5a5bdbaf255c7
-replaces="python-jupyter_widgetsnbextension-data>=0"
-conf_files="/etc/jupyter/nbconfig/notebook.d/widgetsnbextension.json"
+checksum=ea67c17a7cd4ae358f8f46c3b304c40698bc0423732e3f273321ee141232c8be
+# Upstream defines no tests
+make_check=no
 
 post_install() {
 	# /usr/etc is intended for *example configuration*
