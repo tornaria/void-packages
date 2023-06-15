@@ -1,12 +1,12 @@
 # Template file for 'python3-md2gemini'
 pkgname=python3-md2gemini
 version=1.9.1
-revision=1
+revision=2
 build_style=python3-module
-hostmakedepends="python3-setuptools python3-mistune2 python3-cjkwrap
+hostmakedepends="python3-setuptools python3-mistune python3-cjkwrap
  python3-wcwidth"
-depends="python3-mistune2 python3-cjkwrap python3-wcwidth"
-checkdepends="$depends python3-pytest"
+depends="python3-mistune>=2 python3-cjkwrap python3-wcwidth"
+checkdepends="${depends/>=2/} python3-pytest"
 short_desc="Converter from Markdown to the Gemini text format"
 maintainer="Érico Nogueira <ericonr@disroot.org>"
 license="LGPL-3.0-only"
