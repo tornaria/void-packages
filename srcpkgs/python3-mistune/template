@@ -1,16 +1,19 @@
 # Template file for 'python3-mistune'
 pkgname=python3-mistune
-version=0.8.4
-revision=6
-build_style=python3-module
-hostmakedepends="python3-setuptools"
+version=2.0.5
+revision=1
+build_style=python3-pep517
+hostmakedepends="python3-setuptools python3-wheel"
 depends="python3"
-short_desc="Fast markdown parser for Python3"
+checkdepends="python3-pytest"
+short_desc="Markdown parser for Python"
 maintainer="Orphaned <orphan@voidlinux.org>"
 license="BSD-3-Clause"
-homepage="https://github.com/lepture/mistune"
+homepage="https://mistune.lepture.com/en/v2/"
+changelog="https://raw.githubusercontent.com/lepture/mistune/v2/docs/changes.rst"
 distfiles="${PYPI_SITE}/m/mistune/mistune-${version}.tar.gz"
-checksum=59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e
+checksum=0246113cb2492db875c6be56974a7c893333bf26cd92891c85f63151cee09d34
+replaces="python3-mistune2>=0"
 
 post_install() {
 	vlicense LICENSE
