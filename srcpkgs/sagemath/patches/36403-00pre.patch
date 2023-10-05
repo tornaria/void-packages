@@ -1,3 +1,5 @@
+Minor patch so that #36403 applies cleanly over sagemath 10.1
+
 diff --git a/src/sage/matrix/matrix2.pyx b/src/sage/matrix/matrix2.pyx
 index 2053bca80c3..86aca6e00d8 100644
 --- a/src/sage/matrix/matrix2.pyx

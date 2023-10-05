@@ -37,4 +37,7 @@ get_pr  36235   "ecl 23.9.9"
 get_pr  36279   "matplotlib 3.8.0"
 
 # positive review
-get_pr  36403   "python 3.12 part 1"
+#get_pr  36403   "python 3.12" # included in #36407
+
+# needs review
+get_pr  36407   "python 3.12"
