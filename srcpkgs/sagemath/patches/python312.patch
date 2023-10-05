@@ -1,0 +1,669 @@
+commit ef857792c1fb573ea7ff0300545010906eb049a0
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Wed Oct 4 23:50:31 2023 -0300
+
+    py312: skip a test that fails with python 3.12
+
+diff --git a/src/sage/cpython/debug.pyx b/src/sage/cpython/debug.pyx
+index 022d8e1fed7..cdaca3a4854 100644
+--- a/src/sage/cpython/debug.pyx
++++ b/src/sage/cpython/debug.pyx
+@@ -78,7 +78,7 @@ def getattr_debug(obj, name, default=_no_default):
+ 
+     EXAMPLES::
+ 
+-        sage: _ = getattr_debug(list, "reverse")
++        sage: _ = getattr_debug(list, "reverse")  # not tested - broken in python 3.12
+         getattr_debug(obj=<class 'list'>, name='reverse'):
+           type(obj) = <class 'type'>
+           object has __dict__ slot (<class 'dict'>)
+
+commit 352a4b69bd21556d8f997c835d6350677319cf43
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Wed Oct 4 23:42:55 2023 -0300
+
+    py312: fix warning in string literal
+
+diff --git a/build/sage_bootstrap/package.py b/build/sage_bootstrap/package.py
+index 15b342223c4..eb82f96e05f 100644
+--- a/build/sage_bootstrap/package.py
++++ b/build/sage_bootstrap/package.py
+@@ -303,7 +303,7 @@ class Package(object):
+         # Name of the directory containing the checksums.ini file
+         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
+ 
+-    VERSION_PATCHLEVEL = re.compile('(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
++    VERSION_PATCHLEVEL = re.compile(r'(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
+ 
+     def _init_version(self):
+         try:
+
+commit 93614fc2f0d403e8661904f9aba4b41aeb0fdd95
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Wed Oct 4 23:35:28 2023 -0300
+
+    py312: fix crash in polyhedron face iterator
+    
+    Running
+    
+        sage: g = Polyhedron().face_generator()
+        sage: g.__next__()
+        A -1-dimensional face of a Polyhedron in ZZ^0
+        sage: g.__next__()
+    
+    is supposed to raise `StopIteration`. However in python 3.12 the second
+    call to `__next__()` leads to a crash.
+    
+    This is caused by a `return -1` in `next_face_loop()` which is supposed
+    to mean `raise StopIteration`. Using raise explicitly fixes the crash.
+
+diff --git a/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx b/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx
+index 98782303012..f03f0f832ff 100644
+--- a/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx
++++ b/src/sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator.pyx
+@@ -1945,7 +1945,8 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
+         # The function is not supposed to be called,
+         # just prevent it from crashing.
+         # Actually raising an error here results in a bad branch prediction.
+-        return -1
++        # But return -1 results in a crash with python 3.12
++        raise StopIteration
+ 
+     # Getting ``[faces, n_faces, n_visited_all]`` according to dimension.
+     cdef face_list_t* faces = &structure.new_faces[structure.current_dimension]
+
+commit 9c1c7a00890f84a9e65f5fdda2cefb79830704a8
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Wed Oct 4 22:05:38 2023 -0300
+
+    py312: use dict instead of OrderedDict for consistent printing
+    
+    In python 3.12 the printing of OrderedDict has been changed.
+    
+    As of Python 3.7, regular dicts are guaranteed to be ordered, so it's
+    safe to replace OrderedDict by dict.
+    
+    Maybe convenient to replace other uses of OrderedDict, although this is
+    out of scope of python 3.12 support.
+
+diff --git a/src/sage/monoids/trace_monoid.py b/src/sage/monoids/trace_monoid.py
+index 00baa4d14f8..f8176a1e1f2 100644
+--- a/src/sage/monoids/trace_monoid.py
++++ b/src/sage/monoids/trace_monoid.py
+@@ -40,7 +40,6 @@ AUTHORS:
+ #                  https://www.gnu.org/licenses/
+ # ****************************************************************************
+ 
+-from collections import OrderedDict
+ from itertools import repeat, chain, product
+ 
+ from sage.misc.cachefunc import cached_method
+@@ -633,14 +632,14 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
+             sage: x = b*a*d*a*c*b
+             sage: M._compute_dependence_stack(x)
+             ({a, b, c, d},
+-             OrderedDict([(a, [False, False, True, True, False]),
+-                          (b, [True, False, False, False, True]),
+-                          (c, [True, False, False, False]),
+-                          (d, [False, False, True, False])]))
++             {a: [False, False, True, True, False],
++              b: [True, False, False, False, True],
++              c: [True, False, False, False],
++              d: [False, False, True, False]})
+         """
+         independence = self._independence
+         generators_set = set(e for e, _ in x)
+-        stacks = OrderedDict(sorted((g, []) for g in generators_set))
++        stacks = dict(sorted((g, []) for g in generators_set))
+         for generator, times in reversed(list(x)):
+             stacks[generator].extend(repeat(True, times))
+             for other_gen in generators_set:
+
+commit 409c5bc5598f9a49f64da99a41290516c29ec38b
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Wed Oct 4 13:08:43 2023 -0300
+
+    py312: sum changed in python 3.12, fix doctest
+    
+    In python < 3.12 we have
+    
+        sage: a = delta_qexp(1000)
+        sage: sum(a[n]/float(n)^14 for n in range(1,1000))
+        0.9985830631627459
+    
+    This changed in python 3.12 to
+    
+        sage: sum(a[n]/float(n)^14 for n in range(1,1000))
+        0.9985830631627461
+    
+    The latter is the correct one as can be seen using rationals:
+    
+        sage: float(sum(a[n]/n^14 for n in range(1,1000)))
+        0.9985830631627461
+    
+    As a workaround, we do the sum in reverse (from small to large terms),
+    which gives the correct result in any case:
+    
+        sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
+        0.9985830631627461
+
+diff --git a/src/sage/lfunctions/dokchitser.py b/src/sage/lfunctions/dokchitser.py
+index 58499396d6c..16119d20815 100644
+--- a/src/sage/lfunctions/dokchitser.py
++++ b/src/sage/lfunctions/dokchitser.py
+@@ -418,8 +418,8 @@ class Dokchitser(SageObject):
+             sage: L(14)
+             0.998583063162746
+             sage: a = delta_qexp(1000)
+-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
+-            0.9985830631627459
++            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
++            0.9985830631627461
+ 
+         Illustrate that one can give a list of complex numbers for v
+         (see :trac:`10937`)::
+diff --git a/src/sage/lfunctions/pari.py b/src/sage/lfunctions/pari.py
+index bbf289aa21c..e4968866303 100644
+--- a/src/sage/lfunctions/pari.py
++++ b/src/sage/lfunctions/pari.py
+@@ -141,8 +141,8 @@ class lfun_generic():
+             sage: L(14)
+             0.998583063162746
+             sage: a = delta_qexp(1000)
+-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
+-            0.9985830631627459
++            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
++            0.9985830631627461
+ 
+         Illustrate that one can give a list of complex numbers for v
+         (see :trac:`10937`)::
+
+commit 7fc35a6f8375b67b6dc805ba6ed1365d60e67fc5
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Wed Oct 4 10:43:44 2023 -0300
+
+    py312: fix `sage.misc.dev_tools.load_submodules()`
+    
+    Since `importer.find_module(...)` was removed in 3.12.
+    
+    We just follow the suggestion from
+    
+    https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
+    
+    Note that the last three added lines here could be replaced instead by
+    
+        spec.loader.load_module(module_name)
+    
+    which works; however this is deprecated so it's better to use the
+    recommended way using `importlib.util.module_from_spec(...)` and
+    `spec.loader.execute_module(...)`.
+
+diff --git a/src/sage/misc/dev_tools.py b/src/sage/misc/dev_tools.py
+index e7bf176592c..3ece7db2894 100644
+--- a/src/sage/misc/dev_tools.py
++++ b/src/sage/misc/dev_tools.py
+@@ -171,6 +171,7 @@ def load_submodules(module=None, exclude_pattern=None):
+         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
+     """
+     from .package_dir import walk_packages
++    import importlib.util
+ 
+     if module is None:
+         import sage
+@@ -194,8 +195,12 @@ def load_submodules(module=None, exclude_pattern=None):
+         try:
+             sys.stdout.write("load %s..." % module_name)
+             sys.stdout.flush()
+-            loader = importer.find_module(module_name)
+-            loader.load_module(module_name)
++            # see
++            # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
++            spec = importer.find_spec(module_name)
++            module = importlib.util.module_from_spec(spec)
++            sys.modules[module_name] = module
++            spec.loader.exec_module(module)
+             sys.stdout.write(" succeeded\n")
+         except (ValueError, AttributeError, TypeError, ImportError):
+             # we might get error because of cython code that has been
+
+commit e46eec60d27b9984e88350a049e825a22d50d7ee
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 23:14:51 2023 -0300
+
+    py312: don't use `pkgutil.find_loader()`
+    
+    Is deprecated, and it can be replaced just fine with
+    `importlib.util.find_spec()`.
+
+diff --git a/src/sage/sat/solvers/satsolver.pyx b/src/sage/sat/solvers/satsolver.pyx
+index c2f41b18f55..1c4ac400cb6 100644
+--- a/src/sage/sat/solvers/satsolver.pyx
++++ b/src/sage/sat/solvers/satsolver.pyx
+@@ -375,10 +375,10 @@ def SAT(solver=None, *args, **kwds):
+         DIMACS Solver: 'kissat -q {input}'
+     """
+     if solver is None:
+-        import pkgutil
+-        if pkgutil.find_loader('pycryptosat') is not None:
++        from importlib.util import find_spec
++        if find_spec('pycryptosat') is not None:
+             solver = "cryptominisat"
+-        elif pkgutil.find_loader('pycosat') is not None:
++        elif find_spec('pycosat') is not None:
+             solver = "picosat"
+         else:
+             solver = "LP"
+
+commit 1a43ad65dbccdacf6aee29d03b592f791944eaa5
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 22:57:55 2023 -0300
+
+    py312: filter deprecation warnings
+    
+    This adds some filterwarnings that trigger with python 3.12.
+    
+     - deprecation of `datetime.datetime.utcfromtimestamp()` this is
+       triggered by python modules `dateutil` and `sphinx`.
+     - `os.fork()` and `os.ptyfork()` are deprecated when running
+       multi-threaded; I don't see an easy way out of this, so ignore it.
+     - itertools won't support pickling in python 3.14; let's ignore this
+       for now with the hope there's an alternative before 3.14.
+
+diff --git a/src/sage/all__sagemath_repl.py b/src/sage/all__sagemath_repl.py
+index 8d0b43679ca..c31b206bcb8 100644
+--- a/src/sage/all__sagemath_repl.py
++++ b/src/sage/all__sagemath_repl.py
+@@ -79,6 +79,23 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
+                         message=r"Use setlocale\(\), getencoding\(\) and getlocale\(\) instead",
+                         module='docutils.io')
+ 
++# triggered by dateutil 2.8.2 and sphinx 7.0.1 on Python 3.12
++# see: https://github.com/dateutil/dateutil/pull/1285
++# see: https://github.com/sphinx-doc/sphinx/pull/11468
++warnings.filterwarnings('ignore', category=DeprecationWarning,
++                        message=r"datetime.datetime.utcfromtimestamp\(\) is deprecated",
++                        module='dateutil.tz.tz|sphinx.(builders.gettext|util.i18n)')
++
++# triggered on Python 3.12
++warnings.filterwarnings('ignore', category=DeprecationWarning,
++                        message=r"This process.* is multi-threaded, "
++                                r"use of .*\(\) may lead to deadlocks in the child.")
++
++# pickling of itertools is deprecated in Python 3.12
++warnings.filterwarnings('ignore', category=DeprecationWarning,
++                        message=r"Pickle, copy, and deepcopy support will be "
++                                r"removed from itertools in Python 3.14.")
++
+ 
+ from .all__sagemath_objects import *
+ from .all__sagemath_environment import *
+
+commit 3b32f123b6eb95a539cca23c8bba85e68c7db876
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 22:57:18 2023 -0300
+
+    py312: use new api for ast
+    
+    Some changes in ast, the old `node.n` and `node.s` are deprecated in
+    favour of a common `node.value`. Making this change seems better than
+    just ignoring the deprecation warning.
+
+diff --git a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
+index f0545be7d81..811afc48755 100644
+--- a/src/sage/misc/sageinspect.py
++++ b/src/sage/misc/sageinspect.py
+@@ -602,7 +602,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
+             On Python 3 negative numbers are parsed first, for some reason, as
+             a UnaryOp node.
+         """
+-        return node.n
++        return node.value
+ 
+     def visit_Str(self, node):
+         r"""
+@@ -624,7 +624,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
+             sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
+             ['abstract', 'syntax', 'tr\\ee']
+         """
+-        return node.s
++        return node.value
+ 
+     def visit_List(self, node):
+         """
+
+commit 6c69383e712f70dbcfa56f6aca4d406404a5c756
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 21:22:13 2023 -0300
+
+    py312: fix issue when including internal python header
+    
+    To use some (internal) declarations related to dict type, we have to
+    include `<internal/pycore_dict.h>` which needs `#define Py_BUILD_CORE`
+    to be loaded. This causes trouble when `Python.h` was included before
+    defining `Py_BUILD_CORE`, due to a macro `_PyGC_FINALIZED`. We fix it
+    by undefining said macro.
+
+diff --git a/src/sage/cpython/dict_internal.h b/src/sage/cpython/dict_internal.h
+index 42a57bcb468..a5ee35bc198 100644
+--- a/src/sage/cpython/dict_internal.h
++++ b/src/sage/cpython/dict_internal.h
+@@ -169,6 +169,7 @@ dictkeys_set_index(PyDictKeysObject *keys, Py_ssize_t i, Py_ssize_t ix)
+ #else   /* Python >= 3.11 */
+ 
+ #define Py_BUILD_CORE
++#undef _PyGC_FINALIZED
+ #include <internal/pycore_dict.h>
+ 
+ /************************************************************/
+
+commit a676f6bcc8eadf8723541bb6f2a54740c7be9a61
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 21:21:15 2023 -0300
+
+    py312: disable cython profile=true in one file
+    
+    Tracing has changed in python 3.12 in such a way that cython doesn't
+    support it properly anymore. This one file sets `profile=true` for
+    cython which won't work anymore (and it fails to build, at least with
+    cython 0.29). We just disable that line.
+    
+    See also: https://github.com/cython/cython/issues/5450
+
+diff --git a/src/sage/matroids/lean_matrix.pyx b/src/sage/matroids/lean_matrix.pyx
+index 54c68e637c0..a137cbf70e5 100644
+--- a/src/sage/matroids/lean_matrix.pyx
++++ b/src/sage/matroids/lean_matrix.pyx
+@@ -1,5 +1,4 @@
+ # sage.doctest: optional - sage.rings.finite_rings
+-# cython: profile=True
+ """
+ Lean matrices
+ 
+
+commit 4ace19fd16a882b3759549056c6df991ec2058e9
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 21:20:31 2023 -0300
+
+    py312: atexit_callback change
+    
+    In python 3.12, the `struct atexit_callback` was renamed to
+    `struct atexit_py_callback`. The easiest workaround is to add
+    `#define atexit_callback atexit_py_callback` in the right place when
+    building using python 3.12 or newer.
+
+diff --git a/src/sage/cpython/atexit.pyx b/src/sage/cpython/atexit.pyx
+index 961aa348d0a..e5a82735137 100644
+--- a/src/sage/cpython/atexit.pyx
++++ b/src/sage/cpython/atexit.pyx
+@@ -154,6 +154,10 @@ cdef extern from *:
+     #undef _PyGC_FINALIZED
+     #include "internal/pycore_interp.h"
+     #include "internal/pycore_pystate.h"
++    #if PY_VERSION_HEX >= 0x030c0000
++    // struct atexit_callback was renamed in 3.12 to atexit_py_callback
++    #define atexit_callback atexit_py_callback
++    #endif
+     static atexit_callback ** _atexit_callbacks(PyObject *self) {
+         PyInterpreterState *interp = _PyInterpreterState_GET();
+         struct atexit_state state = interp->atexit;
+
+commit 4e057252b71aace1b482670700acd28e505da6d4
+Author: Gonzalo Tornaría <tornaria@cmat.edu.uy>
+Date:   Mon Oct 2 13:20:32 2023 -0300
+
+    py312: changes in PyLong internals
+    
+    The layout for python integers changed in python 3.12.
+    We add a module `sage.cpython.pycore_long` which copies the new
+    (internal) api of PyLong from python 3.12. We also implement fallback
+    version of these functions suitable for python pre-3.12.
+    
+    Note the files implementing the `pycore_long` module (`pycore_long.pxd`
+    and `pycore_long.h`) are shared with fpylll and cypari2.
+
+diff --git a/src/sage/arith/long.pxd b/src/sage/arith/long.pxd
+index 0031a0ae337..3ea70cef571 100644
+--- a/src/sage/arith/long.pxd
++++ b/src/sage/arith/long.pxd
+@@ -19,6 +19,8 @@ from libc.limits cimport LONG_MIN, LONG_MAX
+ from cpython.object cimport Py_SIZE
+ from cpython.number cimport PyNumber_Index, PyIndex_Check
+ from cpython.longintrepr cimport py_long, PyLong_SHIFT, digit
++from sage.cpython.pycore_long cimport (
++    ob_digit, _PyLong_IsNegative, _PyLong_DigitCount)
+ 
+ from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
+ from sage.rings.integer_fake cimport is_Integer, Integer_AS_MPZ
+@@ -299,8 +301,11 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
+         return 0
+ 
+     # x is a Python "int" (aka PyLongObject or py_long in cython)
+-    cdef const digit* D = (<py_long>x).ob_digit
+-    cdef Py_ssize_t size = Py_SIZE(x)
++    cdef const digit* D = ob_digit(x)
++    cdef Py_ssize_t size = _PyLong_DigitCount(x)
++
++    if _PyLong_IsNegative(x):
++        size = -size
+ 
+     # We assume PyLong_SHIFT <= BITS_IN_LONG <= 3 * PyLong_SHIFT.
+     # This is true in all the default configurations:
+diff --git a/src/sage/cpython/pycore_long.h b/src/sage/cpython/pycore_long.h
+new file mode 100644
+index 00000000000..ff1a73d097a
+--- /dev/null
++++ b/src/sage/cpython/pycore_long.h
+@@ -0,0 +1,98 @@
++#include "Python.h"
++#include <stdbool.h>
++
++#if PY_VERSION_HEX >= 0x030C00A5
++#define ob_digit(o)  (((PyLongObject*)o)->long_value.ob_digit)
++#else
++#define ob_digit(o)  (((PyLongObject*)o)->ob_digit)
++#endif
++
++#if PY_VERSION_HEX >= 0x030C00A7
++// taken from cpython:Include/internal/pycore_long.h @ 3.12
++
++/* Long value tag bits:
++ * 0-1: Sign bits value = (1-sign), ie. negative=2, positive=0, zero=1.
++ * 2: Reserved for immortality bit
++ * 3+ Unsigned digit count
++ */
++#define SIGN_MASK 3
++#define SIGN_ZERO 1
++#define SIGN_NEGATIVE 2
++#define NON_SIZE_BITS 3
++
++static inline bool
++_PyLong_IsZero(const PyLongObject *op)
++{
++    return (op->long_value.lv_tag & SIGN_MASK) == SIGN_ZERO;
++}
++
++static inline bool
++_PyLong_IsNegative(const PyLongObject *op)
++{
++    return (op->long_value.lv_tag & SIGN_MASK) == SIGN_NEGATIVE;
++}
++
++static inline bool
++_PyLong_IsPositive(const PyLongObject *op)
++{
++    return (op->long_value.lv_tag & SIGN_MASK) == 0;
++}
++
++static inline Py_ssize_t
++_PyLong_DigitCount(const PyLongObject *op)
++{
++    assert(PyLong_Check(op));
++    return op->long_value.lv_tag >> NON_SIZE_BITS;
++}
++
++#define TAG_FROM_SIGN_AND_SIZE(sign, size) ((1 - (sign)) | ((size) << NON_SIZE_BITS))
++
++static inline void
++_PyLong_SetSignAndDigitCount(PyLongObject *op, int sign, Py_ssize_t size)
++{
++    assert(size >= 0);
++    assert(-1 <= sign && sign <= 1);
++    assert(sign != 0 || size == 0);
++    op->long_value.lv_tag = TAG_FROM_SIGN_AND_SIZE(sign, (size_t)size);
++}
++
++#else
++// fallback for < 3.12
++
++static inline bool
++_PyLong_IsZero(const PyLongObject *op)
++{
++    return Py_SIZE(op) == 0;
++}
++
++static inline bool
++_PyLong_IsNegative(const PyLongObject *op)
++{
++    return Py_SIZE(op) < 0;
++}
++
++static inline bool
++_PyLong_IsPositive(const PyLongObject *op)
++{
++    return Py_SIZE(op) > 0;
++}
++
++static inline Py_ssize_t
++_PyLong_DigitCount(const PyLongObject *op)
++{
++    Py_ssize_t size = Py_SIZE(op);
++    return size < 0 ? -size : size;
++}
++
++static inline void
++_PyLong_SetSignAndDigitCount(PyLongObject *op, int sign, Py_ssize_t size)
++{
++#if (PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION < 9)
++// The function Py_SET_SIZE is defined starting with python 3.9.
++    Py_SIZE(o) = size;
++#else
++    Py_SET_SIZE(op, sign < 0 ? -size : size);
++#endif
++}
++
++#endif
+diff --git a/src/sage/cpython/pycore_long.pxd b/src/sage/cpython/pycore_long.pxd
+new file mode 100644
+index 00000000000..41de637ff18
+--- /dev/null
++++ b/src/sage/cpython/pycore_long.pxd
+@@ -0,0 +1,9 @@
++from cpython.longintrepr cimport py_long, digit
++
++cdef extern from "pycore_long.h":
++    digit* ob_digit(py_long o)
++    bint _PyLong_IsZero(py_long o)
++    bint _PyLong_IsNegative(py_long o)
++    bint _PyLong_IsPositive(py_long o)
++    Py_ssize_t _PyLong_DigitCount(py_long o)
++    void _PyLong_SetSignAndDigitCount(py_long o, int sign, Py_ssize_t size)
+diff --git a/src/sage/libs/gmp/pylong.pxd b/src/sage/libs/gmp/pylong.pxd
+index a73f1da6d6f..84e1bb8cd87 100644
+--- a/src/sage/libs/gmp/pylong.pxd
++++ b/src/sage/libs/gmp/pylong.pxd
+@@ -2,9 +2,10 @@
+ Various functions to deal with conversion mpz <-> Python int/long
+ """
+ 
++from cpython.longintrepr cimport py_long
+ from sage.libs.gmp.types cimport *
+ 
+ cdef mpz_get_pylong(mpz_srcptr z)
+ cdef mpz_get_pyintlong(mpz_srcptr z)
+-cdef int mpz_set_pylong(mpz_ptr z, L) except -1
++cdef int mpz_set_pylong(mpz_ptr z, py_long L) except -1
+ cdef Py_hash_t mpz_pythonhash(mpz_srcptr z)
+diff --git a/src/sage/libs/gmp/pylong.pyx b/src/sage/libs/gmp/pylong.pyx
+index d5993cca5a5..1a36c29d3fa 100644
+--- a/src/sage/libs/gmp/pylong.pyx
++++ b/src/sage/libs/gmp/pylong.pyx
+@@ -28,6 +28,8 @@ AUTHORS:
+ from cpython.object cimport Py_SIZE
+ from cpython.long cimport PyLong_FromLong
+ from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
++from sage.cpython.pycore_long cimport (ob_digit, _PyLong_IsNegative,
++    _PyLong_DigitCount, _PyLong_SetSignAndDigitCount)
+ from .mpz cimport *
+ 
+ cdef extern from *:
+@@ -60,12 +62,9 @@ cdef mpz_get_pylong_large(mpz_srcptr z):
+     """
+     cdef size_t nbits = mpz_sizeinbase(z, 2)
+     cdef size_t pylong_size = (nbits + PyLong_SHIFT - 1) // PyLong_SHIFT
+-    L = _PyLong_New(pylong_size)
+-    mpz_export(L.ob_digit, NULL,
+-            -1, sizeof(digit), 0, PyLong_nails, z)
+-    if mpz_sgn(z) < 0:
+-        # Set correct size
+-        Py_SET_SIZE(L, -pylong_size)
++    cdef py_long L = _PyLong_New(pylong_size)
++    mpz_export(ob_digit(L), NULL, -1, sizeof(digit), 0, PyLong_nails, z)
++    _PyLong_SetSignAndDigitCount(L, mpz_sgn(z), pylong_size)
+     return L
+ 
+ 
+@@ -88,16 +87,13 @@ cdef mpz_get_pyintlong(mpz_srcptr z):
+     return mpz_get_pylong_large(z)
+ 
+ 
+-cdef int mpz_set_pylong(mpz_ptr z, L) except -1:
++cdef int mpz_set_pylong(mpz_ptr z, py_long L) except -1:
+     """
+     Convert a Python ``long`` `L` to an ``mpz``.
+     """
+-    cdef Py_ssize_t pylong_size = Py_SIZE(L)
+-    if pylong_size < 0:
+-        pylong_size = -pylong_size
+-    mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails,
+-            (<py_long>L).ob_digit)
+-    if Py_SIZE(L) < 0:
++    cdef Py_ssize_t pylong_size = _PyLong_DigitCount(L)
++    mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails, ob_digit(L))
++    if _PyLong_IsNegative(L):
+         mpz_neg(z, z)
+ 
+ 
+diff --git a/src/sage/symbolic/ginac/numeric.cpp b/src/sage/symbolic/ginac/numeric.cpp
+index c4152e092e3..4bcf45e8793 100644
+--- a/src/sage/symbolic/ginac/numeric.cpp
++++ b/src/sage/symbolic/ginac/numeric.cpp
+@@ -67,6 +67,7 @@
+ #include "archive.h"
+ #include "tostring.h"
+ #include "utils.h"
++#include "../../cpython/pycore_long.h"
+ 
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wdeprecated-register"
+@@ -706,18 +707,12 @@ static long _mpq_pythonhash(mpq_t the_rat)
+ // Initialize an mpz_t from a Python long integer
+ static void _mpz_set_pylong(mpz_t z, PyLongObject* l)
+ {
+-    Py_ssize_t pylong_size = Py_SIZE(l);
+-    int sign = 1;
+-
+-    if (pylong_size < 0) {
+-        pylong_size = -pylong_size;
+-        sign = -1;
+-    }
++    Py_ssize_t pylong_size = _PyLong_DigitCount(l);
+ 
+     mpz_import(z, pylong_size, -1, sizeof(digit), 0,
+-               8*sizeof(digit) - PyLong_SHIFT, l->ob_digit);
++               8*sizeof(digit) - PyLong_SHIFT, ob_digit(l));
+ 
+-    if (sign < 0)
++    if (_PyLong_IsNegative(l))
+         mpz_neg(z, z);
+ }
+ 
