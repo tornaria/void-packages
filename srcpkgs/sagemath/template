@@ -1,7 +1,7 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=10.2
-revision=2
+version=10.3.rc0
+revision=1
 build_wrksrc=pkgs/sagemath-standard
 build_style=python3-module
 _bindir=/usr/lib/sagemath/$version/bin
@@ -24,7 +24,7 @@ depends="eclib-devel fflas-ffpack flintlib-devel gcc-fortran meson gd-devel
  python3-memory_allocator python3-networkx python3-pip python3-pkgconfig
  python3-pplpy python3-primecountpy python3-requests python3-scipy
  python3-sympy python3-traitlets sage-data-combinatorial_designs
- sage-data-conway_polynomials sage-data-elliptic_curves sage-data-graphs
+ python3-conway-polynomials sage-data-elliptic_curves sage-data-graphs
  sage-data-polytopes_db sympow tachyon threejs-sage"
 checkdepends="$depends pythran python3-Sphinx"
 short_desc="Open source mathematics software"
@@ -33,16 +33,18 @@ license="GPL-2.0-or-later"
 homepage="https://www.sagemath.org/"
 changelog="https://github.com/sagemath/sage/releases"
 distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
-checksum=e7125f13495e1068edab73735aca7f9b2c655688096e9d109e628c023e76411f
+checksum=529de6649900bdc8190dbd0aaa2cc404d651bfc126ff72d9683515d8344ecc79
 nocross="due to ntl (eclib, singular), fflas-ffpack, givaro, linbox, sympow, maxima"
 
 post_patch() {
 	# git tree needs bootstrapping
 	$wrksrc/bootstrap sagelib
+
+	# we need sage_setup here
+	ln -s ../../src/sage_setup .
 }
 
 pre_build() {
-	export PYTHONPATH=../sage-setup
 	export PYTHONDONTWRITEBYTECODE=yes
 	export SAGE_NUM_THREADS="$XBPS_MAKEJOBS"
 }
@@ -52,12 +54,11 @@ post_build() {
 	_scripts=$(cd build/scripts* && pwd)
 
 	# configuration files
-	cp ${FILESDIR}/sage_conf.py $_lib
+	#cp ${FILESDIR}/sage_conf.py $_lib
 	cp ${FILESDIR}/sage-env-config $_scripts
 }
 
 pre_install() {
-	export PYTHONPATH=../sage-setup
 	export PYTHONDONTWRITEBYTECODE=yes
 	export SAGE_NUM_THREADS="$XBPS_MAKEJOBS"
 }
@@ -77,7 +78,7 @@ post_install() {
 	# we don't have docs here
 	rm ${DESTDIR}/usr/share/jupyter/kernels/sagemath/doc
 	# this symlink is shipped in threejs-sage pkg
-	rm ${DESTDIR}/usr/share/jupyter/nbextensions/threejs-sage
+	rm -f ${DESTDIR}/usr/share/jupyter/nbextensions/threejs-sage
 
 	# symlink main binary
 	vmkdir usr/bin
