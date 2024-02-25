@@ -1,0 +1,22 @@
+From 0e2fa0f98f9964c101f3bd1043dff41667f152df Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Albin=20Ahlb=C3=A4ck?= <albin.ahlback@gmail.com>
+Date: Tue, 27 Feb 2024 10:28:39 +0100
+Subject: [PATCH] Add padic_types.h to headers in Makefile
+
+Thanks to @tornaria for bringing this up
+---
+ Makefile.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile.in b/Makefile.in
+index 5705f8343f..9675fc80fc 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -263,6 +263,7 @@ SINGLE_HEADERS :=                                                           \
+         fmpz_types.h                    fmpq_types.h                        \
+         fmpz_mod_types.h                fq_nmod_types.h                     \
+         fq_zech_types.h                 fq_types.h                          \
++        padic_types.h                                                       \
+         n_poly_types.h                  mpoly_types.h                       \
+         arf_types.h                     acf_types.h                         \
+         arb_types.h                     acb_types.h                         \
