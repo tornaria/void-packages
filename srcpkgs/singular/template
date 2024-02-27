@@ -1,7 +1,7 @@
 # Template file for 'singular'
 pkgname=singular
 version=4.3.2p10
-revision=1
+revision=2
 _majver=${version%p*}
 build_style=gnu-configure
 configure_args="--with-readline=ncurses
@@ -16,7 +16,7 @@ configure_args="--with-readline=ncurses
 hostmakedepends="perl tar"
 makedepends="flintlib-devel cddlib-devel readline-devel"
 short_desc="Computer algebra system for polynomial computations"
-maintainer="dkwo <npiazza@disroot.org>"
+maintainer="dkwo <npiazza@disroot.org>, Gonzalo Tornaría <tornaria@cmat.edu.uy>"
 license="GPL-2.0-or-later"
 homepage="https://www.singular.uni-kl.de"
 distfiles="https://www.singular.uni-kl.de/ftp/pub/Math/Singular/SOURCES/${_majver//./-}/singular-${version}.tar.gz"

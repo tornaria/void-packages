@@ -1,0 +1,37 @@
+From 772cf3b042bab767d4d359d27fd798e0b7e48179 Mon Sep 17 00:00:00 2001
+From: Antonio Rojas <arojas@archlinux.org>
+Date: Tue, 27 Feb 2024 10:03:17 +0100
+Subject: [PATCH] Fix build with flint 3.1 (#1209)
+
+---
+ factory/cfModGcd.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/factory/cfModGcd.cc b/factory/cfModGcd.cc
+index 8388f8e5e2..482f55898d 100644
+--- a/factory/cfModGcd.cc
++++ b/factory/cfModGcd.cc
+@@ -1806,7 +1806,11 @@ gaussianElimFq (CFMatrix& M, CFArray& L, const Variable& alpha)
+   fq_nmod_mat_t FLINTN;
+   convertFacCFMatrix2Fq_nmod_mat_t (FLINTN, ctx, *N);
+   // rank
++  #if __FLINT_RELEASE >= 30100
++  long rk= fq_nmod_mat_rref (FLINTN,FLINTN,ctx);
++  #else
+   long rk= fq_nmod_mat_rref (FLINTN,ctx);
++  #endif
+   // clean up
+   fq_nmod_mat_clear (FLINTN,ctx);
+   fq_nmod_ctx_clear(ctx);
+@@ -1912,7 +1916,11 @@ solveSystemFq (const CFMatrix& M, const CFArray& L, const Variable& alpha)
+   fq_nmod_mat_t FLINTN;
+   convertFacCFMatrix2Fq_nmod_mat_t (FLINTN, ctx, *N);
+   // rank
++  #if __FLINT_RELEASE >= 30100
++  long rk= fq_nmod_mat_rref (FLINTN,FLINTN,ctx);
++  #else
+   long rk= fq_nmod_mat_rref (FLINTN,ctx);
++  #endif
+   #elif defined(HAVE_NTL)
+   int p= getCharacteristic ();
+   if (fac_NTL_char != p)

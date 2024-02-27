@@ -1,0 +1,25 @@
+From bafd599cf3baf0d4ced85ca8a2a7adf327823c43 Mon Sep 17 00:00:00 2001
+From: Hans Schoenemann <hannes@mathematik.uni-kl.de>
+Date: Wed, 24 Jan 2024 14:05:05 +0100
+Subject: [PATCH] more FLINT 3.0 includes
+
+---
+ factory/FLINTconvert.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/factory/FLINTconvert.h b/factory/FLINTconvert.h
+index ec5a56c309..3908d77fcb 100644
+--- a/factory/FLINTconvert.h
++++ b/factory/FLINTconvert.h
+@@ -47,6 +47,11 @@ extern "C"
+ #include <flint/fq_nmod_mpoly_factor.h>
+ #include <flint/fmpz_mod.h>
+ #endif
++#if ( __FLINT_RELEASE >= 30000)
++#include <flint/nmod.h>
++#include <flint/nmod_mpoly.h>
++#include <flint/fmpz_vec.h>
++#endif
+ #endif
+ 
+ EXTERN_VAR flint_rand_t FLINTrandom;
