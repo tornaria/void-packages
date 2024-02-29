@@ -1,6 +1,6 @@
 # Template file for 'sagemath'
 pkgname=sagemath
-version=10.3.rc0
+version=10.3.rc1
 revision=1
 build_wrksrc=pkgs/sagemath-standard
 build_style=python3-module
@@ -33,7 +33,7 @@ license="GPL-2.0-or-later"
 homepage="https://www.sagemath.org/"
 changelog="https://github.com/sagemath/sage/releases"
 distfiles="https://github.com/sagemath/sage/archive/refs/tags/$version.tar.gz"
-checksum=529de6649900bdc8190dbd0aaa2cc404d651bfc126ff72d9683515d8344ecc79
+checksum=7b233edc3c08e65bbbd40fbac8fe78799a279b0d1e19cfa1481a9897750baa98
 nocross="due to ntl (eclib, singular), fflas-ffpack, givaro, linbox, sympow, maxima"
 
 post_patch() {
