@@ -1,0 +1,44 @@
+--- a/garmin_fit_sdk/util.py
++++ b/garmin_fit_sdk/util.py
+@@ -18,8 +18,8 @@ FIT_EPOCH_S = 631065600
+ 
+ def convert_timestamp_to_datetime(timestamp):
+     '''Takes a FIT datetime timestamp and converts it to a python datetime in utc'''
+-    utc_datetime = datetime.utcfromtimestamp((timestamp if timestamp else 0) + FIT_EPOCH_S)
+-    return utc_datetime.replace(tzinfo=timezone.utc)
++    ts = (timestamp if timestamp else 0) + FIT_EPOCH_S
++    return datetime.fromtimestamp(ts, timezone.utc)
+ 
+ def _convert_string(string):
+     '''Takes a string and converts it according to the fit protocol standard.'''
+--- a/tests/test_decoder.py
++++ b/tests/test_decoder.py
+@@ -304,9 +304,9 @@ class TestDecoderRead():
+     @pytest.mark.parametrize(
+         "option_status,expected_value",
+         [
+-            (True, datetime.utcfromtimestamp(1000000000 + 631065600)),
++            (True, datetime.fromtimestamp(1000000000 + 631065600, timezone.utc)),
+             (False, 1000000000),
+-            (None, datetime.utcfromtimestamp(1000000000 + 631065600))
++            (None, datetime.fromtimestamp(1000000000 + 631065600, timezone.utc))
+         ], ids=["Set to True", "Set to False", "Default Should Convert Timestamps"]
+     )
+     def test_convert_datetimes_to_python_datetimes(self, option_status, expected_value):
+diff --git a/tests/test_util.py b/tests/test_util.py
+index a6d9877..d34c971 100644
+--- a/tests/test_util.py
++++ b/tests/test_util.py
+@@ -17,9 +17,9 @@ from garmin_fit_sdk import util
+ @pytest.mark.parametrize(
+     "given_timestamp,expected_datetime",
+     [
+-        (1029086357, datetime.utcfromtimestamp(1029086357 + 631065600)),
+-        (0, datetime.utcfromtimestamp(631065600)),
+-        (None, datetime.utcfromtimestamp(631065600)),
++        (1029086357, datetime.fromtimestamp(1029086357 + 631065600, timezone.utc)),
++        (0, datetime.fromtimestamp(631065600, timezone.utc)),
++        (None, datetime.fromtimestamp(631065600, timezone.utc)),
+     ], ids=["Regular timestamp", "0 timestamp defaults to FITEPOCH", "Null timestamp defaults to FITEPOCH"],
+ )
+ def test_convert_datetime(given_timestamp, expected_datetime):

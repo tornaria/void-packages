@@ -1,0 +1,22 @@
+# Template file for 'python3-garmin_fit_sdk'
+pkgname=python3-garmin_fit_sdk
+version=21.158.0
+revision=1
+build_style=python3-pep517
+hostmakedepends="python3-setuptools_scm python3-wheel"
+depends="python3"
+checkdepends="python3-pytest python3-pytest-mock"
+short_desc="Garmin FIT Python SDK"
+maintainer="Gonzalo Tornaría <tornaria@cmat.edu.uy>"
+license="custom:FIT Protocol License"
+homepage="https://github.com/garmin/fit-python-sdk"
+changelog="https://forums.garmin.com/developer/fit-sdk/w/fit-sdk-wiki/92/fit-sdk-release-notes"
+distfiles="${PYPI_SITE}/g/garmin_fit_sdk/garmin-fit-sdk-${version}.tar.gz"
+checksum=6352ad9ccb5b90336b88fc8000d3a04ff9ae5b0fa622586eba7dd2c76bc7a7d9
+repository=nonfree
+restricted=yes
+
+post_install() {
+	vlicense ${FILESDIR}/LICENSE.txt
+	vdoc README.md
+}
